@@ -52,30 +52,18 @@ def bubble_sort(arr):
 
 def display_array(arr):
 	values_string = ""
-	vertical_table = []
+	table = [""] * int(len(arr)*.6)
 	
 	for i in arr:
 		values_string += str(i) + " "
-		i_str = ""
 		
 		for j in range(int(len(arr)*.6)):
-			if j<i*.6: i_str = "#" + i_str
-			else: i_str = " " + i_str
-		
-		vertical_table.append(i_str)
-	
-	horizontal_table = []
-	for i in range(int(len(arr)*.6)):
-		i_str = ""
-		
-		for j in range(len(arr)):
-			i_str += vertical_table[j][i:i+1]
-			
-		horizontal_table.append(i_str)
+			if j<i*.6: table[-1-j] += "#"
+			else: table[-1-j] += " "
 	
 	print("Raw values:\n" + values_string)
 	print("\nTable:")
-	for i in horizontal_table: print(i)
+	for i in table: print(i)
 
 unsorted_array = []
 
