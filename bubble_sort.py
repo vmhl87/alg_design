@@ -7,18 +7,17 @@ def bubble_sort(arr):
 	
 	# First we clone the original array so that we have a mutable array
 	# to work with - we label it sorted even though it isn't fully yet
-	sorted_array = []
-	for i in arr: sorted_array.append(i)
+	sorted_array = [i for i in arr]
 	
 	# Because we do not know how many times we must iterate over the
 	# array, we will use a while loop, and keep track of whether or not
 	# we are still unsorted with a variable - which we assume to be true
 	# at the start
-	is_unsorted = True
+	is_sorted = False
 	
-	while is_unsorted:
+	while not is_sorted:
 		# We assume that the array is sorted until we find that it isn't
-		is_unsorted = False
+		is_sorted = True
 		
 		# We are comparing pairs of elements, so we will only need to
 		# iterate length - 1 times
@@ -39,36 +38,29 @@ def bubble_sort(arr):
 				sorted_array[i+1] += sorted_array[i]
 				
 				# Compute the previous value of the second value by sub-
-				# -tracting the difference
+				# tracting the difference
 				sorted_array[i] = sorted_array[i+1] - sorted_array[i]
 				
 				# Because we found elements out of place, we must set
-				# unsorted indicator to true
-				is_unsorted = True
+				# sorted indicator to false
+				is_sorted = False
 	
 	return sorted_array
 
-# --- driver code ---
+# --- driver code ---  (I may have overdone the array visualization code)
 
 def display_array(arr):
-	values_string = ""
-	table = [""] * int(len(arr)*.6)
-	
-	for i in arr:
-		values_string += str(i) + " "
-		
-		for j in range(int(len(arr)*.6)):
-			if j<i*.6: table[-1-j] += "#"
-			else: table[-1-j] += " "
-	
-	print("Raw values:\n" + values_string)
-	print("\nTable:")
-	for i in table: print(i)
+	# print out raw values and a visualized table (this utility has been
+	# refactored multiple times, which is why it is stylistically dense)
+	print(
+		"Raw values:\n" + " ".join([str(i) for i in arr]) + "\nTable:\n" +
+		"\n".join([
+			"".join([
+				"#" if (len(arr)*.6-i-1)<j*.6 else " " for j in arr
+			]) for i in range(int(len(arr)*.6))
+		]))
 
-unsorted_array = []
-
-for i in range(25):
-	unsorted_array.append(random.randint(0, 25))
+unsorted_array = [random.randint(0,25) for i in range(25)]
 
 print("=== Unsorted array ===")
 display_array(unsorted_array)
