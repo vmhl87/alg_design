@@ -1,0 +1,30 @@
+
+== sorting algs ==
+selection sort - insertion sort
+both O(n^2), lower constant factor (?) than bubble sort
+
+sel sort:
+partitioning: unsorted, sorted
+iter: select smallest, move to start of sorted
+
+note that in each iteration, only one item is resolved: therfore, total iterations is some approximation of (n^2)/2
+
+ins sort:
+similar partitioning
+iter over each elem: loop through sorted and insert in appropriate pos
+can binary search be used to achieve n log n? | this does not work because insertion necessarily require full swaps
+
+item will take on average n/2 checks to find appropriate pos: therfore also (n^2)/2
+(note that bubble sort can be similarly bound-checked to approximate (n^2)/2 operations)
+
+
+remember that i,j = j,i exists
+
+== big O notation ==
+metric we use to describe approximately how #ops scales with n, the size of the input parameter
+
+analogy: file on hard drive, need to send to friend a sufficiently large distance away
+optimizing parameter is time of transfer
+ftp vs. physical delivery - bandwidth problem
+
+1 -> log n -> n -> n log n -> n^2 -> 2^n
