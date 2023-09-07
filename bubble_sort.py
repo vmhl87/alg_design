@@ -98,3 +98,4 @@ sorted_array = bubble_sort(unsorted_array)
 
 print("=== Sorted array ===")
 display_array(sorted_array)
+
