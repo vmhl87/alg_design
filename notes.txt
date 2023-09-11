@@ -1,4 +1,6 @@
 
+--- 7/9/23 ---
+
 == sorting algs ==
 selection sort - insertion sort
 both O(n^2), lower constant factor (?) than bubble sort
@@ -28,3 +30,55 @@ optimizing parameter is time of transfer
 ftp vs. physical delivery - bandwidth problem
 
 1 -> log n -> n -> n log n -> n^2 -> 2^n
+
+--- continue 11/9/23 ---
+
+big o, big theta, big omega
+
+print all array vals: O(n)
+formally, defined (in academia) as upper bound of time for an alg - alg is at least as fast as this
+
+for all arr val: O(n) - takes <= ops O(n) to print n items
+
+however we want O(n) to be asymptotically tight
+
+big omega:
+in academia: defined as lower bound to time for algorithm (cannot be significantly faster than this)
+could instead be log n, or 1, but n is best approx
+
+big theta:
+in academia: both O() and big_omega() - in an alg, big_theta(n) if and only if O(n) and also big_omega(n)
+tighter asymptotic bound
+
+In industry this is diff: O(), big_theta() are equiv.
+industry meaning of O() is similar to academically big_theta()
+
+in this class, despite academically, we will use industry O(), optimize for tightest def. of runtime
+
+best case, expected case, worst case = big_omega(), big_theta(), O()
+X no particular relation
+
+apply this on quicksort
+
+== space complexity ==
+sometimes memory is the limiting factor rather than time
+
+arr of size n: O(n) space
+2d arr: O(n^2) space
+
+stack space in a recursive call:
+sum: n-> if n<0 ret 0; ret n+sum(n-1);
+
+stack space of O(n), time of O(n)
+
+ex2 | pair_sum_seq: n-> sum=0; for i 0->n: sum+=pair_sum(i,i+1); ret sum;
+      pair_sum: a,b-> ret a+b;
+
+time: O(n), stack: O(1)
+
+dropping constants: O(n) code could run faster than O(1) for specific inputs: constant factor
+O() only desc rate of increase, not the actual runtime
+
+alg described as O(2n) is equiv to O(n)
+
+dropping non-dominant terms: O(n^3 + n^2 + n) is equiv to O(n^3)
