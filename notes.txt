@@ -82,3 +82,22 @@ O() only desc rate of increase, not the actual runtime
 alg described as O(2n) is equiv to O(n)
 
 dropping non-dominant terms: O(n^3 + n^2 + n) is equiv to O(n^3)
+
+--- 13/9/23 ---
+
+== merge sort ==
+
+Subdivide the array into two sections, then recursively keep subdividing and merging these sections until sorted
+
+merging: because both subarrays are sorted, create a sorted partition, and look at the leading members of each subarray
+in turn until the whole array is finished
+
+subrot: sort, merge
+
+complexity: 3 visits per elem
+if v(n) = time to sort array of len n, v(n) = v(n/2) + v(n/2) + 3n; or v(n)=2v(n/2)+3n
+assume n=2^m: v(2^m)=2v(2^(m-1))+3n
+
+Recursively we can derive that v(n) = 2^k v(n/(2^k)) + 3nk
+therefore: defining a base case of v(1) = 1; v(n) = 2^(log n) + 3n(log n) -> n + 3n log n => O(n log n)
+If v(1) = 0 (which is algorithmically possible) this will result in v(n) -> 3n log n
