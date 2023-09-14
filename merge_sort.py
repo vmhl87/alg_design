@@ -12,10 +12,20 @@ def merge_sort(arr):
 	
 	split_index = int(len(arr)/2)
 	
-	#sub_array_1, sub_array_2 = arr[:split_index], arr[split_index:]
 	sub_array_1, sub_array_2 = merge_sort(arr[:split_index]), merge_sort(arr[split_index:])
 	
 	look_index_1, look_index_2 = 0, 0
+	
+	while look_index_1 < len(sub_array_1) and look_index_2 < len(sub_array_2):
+		if sub_array_1[look_index_1] < sub_array_2[look_index_2]:
+			sorted_array.append(sub_array_1[look_index_1])
+			look_index_1 += 1
+		else:
+			sorted_array.append(sub_array_2[look_index_2])
+			look_index_2 += 1
+	
+	for i in range(look_index_1, len(sub_array_1)): sorted_array.append(sub_array_1[i])
+	for i in range(look_index_2, len(sub_array_2)): sorted_array.append(sub_array_2[i])
 	
 	return sorted_array
 
