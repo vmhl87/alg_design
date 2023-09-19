@@ -1,9 +1,9 @@
-
 # ms_loh.py
 # GOAL: implement merge sort on an integer array
 # Code Author: Vincent Loh
 
 import random
+
 
 def merge_sort(arr):
 	if len(arr) == 1: return arr
