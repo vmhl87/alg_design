@@ -101,3 +101,14 @@ assume n=2^m: v(2^m)=2v(2^(m-1))+3n
 Recursively we can derive that v(n) = 2^k v(n/(2^k)) + 3nk
 therefore: defining a base case of v(1) = 1; v(n) = 2^(log n) + 3n(log n) -> n + 3n log n => O(n log n)
 If v(1) = 0 (which is algorithmically possible) this will result in v(n) -> 3n log n
+
+--- 27/9/23 ---
+
+data types: a set of values and a set of operations that can be applied to said values
+
+== abstraction ==
+
+also encapsulation: construct that helps bundle data with methods (i.e. inline method instead of external func)
+
+ADTs: data type whose representation gets hidden (?) from client - supports encapsulation in program design
+	ex: do not need to know what bits do what / how datatype stores is implemented in order to use it - python dynamically allocated arrays

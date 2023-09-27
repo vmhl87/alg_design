@@ -1,0 +1,4 @@
+essentially:
+given input (i.e. c2h4o2) decompose this into arr of counts
+[2,4,2] with linker as [c,h,o]
+also in linker somehow store bond info: [4,1,2]
