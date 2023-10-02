@@ -112,3 +112,28 @@ also encapsulation: construct that helps bundle data with methods (i.e. inline m
 
 ADTs: data type whose representation gets hidden (?) from client - supports encapsulation in program design
 	ex: do not need to know what bits do what / how datatype stores is implemented in order to use it - python dynamically allocated arrays
+
+--- 29/9/23 ---
+
+== hash tables ==
+
+datastructure - maps keys to values for highly efficient lookup
+number of ways to implement this | hash table / binary tree ?
+
+simple implementation: array of linked lists
+[
+ & -> & -> ...
+ & -> & -> ...
+ ...
+]
+hashcode func: decompose any val into int/long rep
+
+insertion: in -> key | hash_code(key) -> map hashcode to index in arr, and insert
+however: collisions | because of this, allocate a new object and point to it w linked_list
+
+retrieval: in -> key | hash(key)%len > map[index]; traverse ll until key; output value
+
+prop of hash functions: take use of all info of key [ ex: do not use str[0] ]
+hash values should be uniformly distributed
+similar keys should output very different results
+hash func must be fast
