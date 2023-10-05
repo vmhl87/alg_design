@@ -4,7 +4,16 @@ def hash_string(str):
 	if alg==0: return hash_0(str)
 	if alg==1: return hash_1(str)
 	if alg==2: return hash_2(str)
+	if alg==3: return hash_3(str)
 	return hash_0(str)
+
+def hash_3(str):
+	min=0
+	range=10000000
+	for c in str:
+		range=int(range/26)
+		min+=range*((ord(c)-ord('a'))%26)
+	return min%10000000
 
 def hash_2(str):
 	opt,max,cur=1,len(str),1
@@ -43,7 +52,7 @@ def hash_0(str):
 	for c in str:
 		diff=ord(c)-last
 		last=ord(c)
-		out=23*out+diff%23
+		out=26*out+diff%26
 		if out>10000000:
 			ret+=out%10000000
 			out=int(out/10000000)
@@ -56,7 +65,10 @@ print("array init")
 
 f = open("in.txt", "r")
 print("reading file...")
+ct=0
 for word in f:
+	ct+=1
+	# if ct>10000: break
 	vals[hash_string(word)]+=1
 f.close()
 
@@ -65,8 +77,8 @@ print("hashes calculated")
 collisions,unique=0,0
 for i in vals:
 	if i>1:
-		collisions+=i-1
+		collisions+=i
 		unique+=1
 print("Total collisions: "+str(collisions))
-if unique>0: collisions=str(1+collisions/unique)
-print("Average keys per colliding cell: "+collisions)
+if unique>0: collisions=collisions/unique
+print("Average keys per colliding cell: "+str(collisions))
