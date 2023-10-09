@@ -1,3 +1,4 @@
+import time
 
 def GenericSort(arr):
 	# analyze array and merge sort or counting sort
@@ -213,19 +214,34 @@ class Birthday:
 
 
 f = open("in.csv", "r")
-print("Reading file...")
+print("opened file")
 
-birthdayCounts = [{"count": 0, "month": 0, "day": 0} for _ in range(365)]
+a = time.time_ns()
+birthdayCounts = [{"count": 0, "month": 0, "day": 0} for i in range(365)]
+print("array init ("+str(int((time.time_ns()-a)/1000000))+" ms)")
 
+print("initializing data...")
+a = time.time_ns()
 for date in f:
 	pair = date.split(",")
-	birthdayCounts[Birthday.dayNumber(int(pair[0]),int(pair[1]))]["count"] += 1
-	birthdayCounts[Birthday.dayNumber(int(pair[0]),int(pair[1]))]["month"] = int(pair[0])
-	birthdayCounts[Birthday.dayNumber(int(pair[0]),int(pair[1]))]["day"] = int(pair[1])
+	index = Birthday.dayNumber(int(pair[0]), int(pair[1])) - 1
+	birthdayCounts[index]["count"] += 1
+	birthdayCounts[index]["month"] = int(pair[0])
+	birthdayCounts[index]["day"] = int(pair[1])
+print("data init ("+str(int((time.time_ns()-a)/1000000))+" ms)")
 
+a = time.time_ns()
 sortableCounts = [Birthday(i["month"], i["day"], i["count"]) for i in birthdayCounts]
+print("processed array ("+str(int((time.time_ns()-a)/1000000))+" ms)")
 
+print("sorting...")
+a = time.time_ns()
 sortedCounts = GenericSort(sortableCounts)
+print("sorted! ("+str(int((time.time_ns()-a)/1000000))+" ms)")
+
+f = open("birthdays_sorted.txt", "w")
 
 for i in sortedCounts:
-	print(i.month + "," + i.day + "," + i.occurances)
+	f.write(str(i.month) + "," + str(i.day) + "," + str(i.occurances) + "\n")
+
+print("done")
