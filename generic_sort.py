@@ -22,7 +22,7 @@ def GenericSort(arr):
 	# will vary
 	tempString = ""
 	variance = ""
-	for i in range(min(len(arr), 3 + int(len(arr)/50))):
+	for i in range(min(len(arr), 3 + max(50,int(len(arr)/50)))):
 		j = str(arr[i])
 		
 		if len(j) > len(variance):
@@ -167,8 +167,11 @@ class MergeSort:
 
 
 class Birthday:
-	def __init__(self, month, day):
+	def __init__(self, month, day, occurances):
 		self.date = Birthday.dayNumber(month, day)
+		self.month = month
+		self.day = day
+		self.occurances = occurances
 	
 	# we will make these utilities class methods in case we
 	# want to use them elsewhere in our code
@@ -200,11 +203,29 @@ class Birthday:
 	# will be identical, and for any two instances of this class which
 	# represent distinct dates, their representations will be distinct.
 	
+	# we reverse this operator to sort highest to lowest rather than
+	# lowest to highest
 	def __lt__(self, other):
-		return self.date < other.date
+		return self.occurances > other.occurances
 	
 	def __str__(self):
 		return str(self.date)
 
 
+f = open("in.csv", "r")
+print("Reading file...")
 
+birthdayCounts = [{"count": 0, "month": 0, "day": 0} for _ in range(365)]
+
+for date in f:
+	pair = date.split(",")
+	birthdayCounts[Birthday.dayNumber(int(pair[0]),int(pair[1]))]["count"] += 1
+	birthdayCounts[Birthday.dayNumber(int(pair[0]),int(pair[1]))]["month"] = int(pair[0])
+	birthdayCounts[Birthday.dayNumber(int(pair[0]),int(pair[1]))]["day"] = int(pair[1])
+
+sortableCounts = [Birthday(i["month"], i["day"], i["count"]) for i in birthdayCounts]
+
+sortedCounts = GenericSort(sortableCounts)
+
+for i in sortedCounts:
+	print(i.month + "," + i.day + "," + i.occurances)
