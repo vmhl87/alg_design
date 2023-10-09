@@ -212,14 +212,16 @@ class Birthday:
 	def __str__(self):
 		return str(self.date)
 
-
+# open file
 f = open("in.csv", "r")
 print("opened file")
 
+# initialize an array to store occurances of each birthday
 a = time.time_ns()
 birthdayCounts = [{"count": 0, "month": 0, "day": 0} for i in range(365)]
 print("array init ("+str(int((time.time_ns()-a)/1000000))+" ms)")
 
+# read the input file and increment birthday counts
 print("initializing data...")
 a = time.time_ns()
 for date in f:
@@ -230,17 +232,19 @@ for date in f:
 	birthdayCounts[index]["day"] = int(pair[1])
 print("data init ("+str(int((time.time_ns()-a)/1000000))+" ms)")
 
+# format our counting array into an array of data structures compatible with genericSort
 a = time.time_ns()
 sortableCounts = [Birthday(i["month"], i["day"], i["count"]) for i in birthdayCounts]
 print("processed array ("+str(int((time.time_ns()-a)/1000000))+" ms)")
 
+# sort our array
 print("sorting...")
 a = time.time_ns()
 sortedCounts = GenericSort(sortableCounts)
 print("sorted! ("+str(int((time.time_ns()-a)/1000000))+" ms)")
 
+# write out to file
 f = open("birthdays_sorted.txt", "w")
-
 for i in sortedCounts:
 	f.write(str(i.month) + "," + str(i.day) + "," + str(i.occurances) + "\n")
 
