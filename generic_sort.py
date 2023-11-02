@@ -248,4 +248,5 @@ f = open("birthdays_sorted.txt", "w")
 for i in sortedCounts:
 	f.write(str(i.month) + "," + str(i.day) + "," + str(i.occurances) + "\n")
 
+f.close()
 print("done")

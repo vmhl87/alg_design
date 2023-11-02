@@ -137,3 +137,9 @@ prop of hash functions: take use of all info of key [ ex: do not use str[0] ]
 hash values should be uniformly distributed
 similar keys should output very different results
 hash func must be fast
+
+--- 17/10/23 ---
+
+== images ==
+
+processing stuff idk
