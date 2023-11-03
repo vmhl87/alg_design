@@ -6,135 +6,177 @@ using namespace std;
 #define lines 2169
 
 struct e{
-	float r;
-	float g;
-	float b;
+	float val[3];
 	int id;
 };
 
 struct e emojis[lines];
 
 struct node{
-	float r;
-	float g;
-	float b;
+	// prop
+	float v;
+	int l;  // also used in ending vals for emoji id
+	int r;
 	float bounds[3][2];
 	bool end=false;
-	bool finalized=false;
-	int next[2][2][2];
+	// meta
+	bool finished=false;
+	int rgb;
 };
 
 vector<struct node> tree;
 
-float avg_range(float bounds[3][2],int i){
-	float r=0.,g=0.,b=0.;
-	for(struct e h:emojis){
-		r+=h.r;
-		g+=h.g;
-		b+=h.b;
-	}
-	r/=(float)lines;
-	g/=(float)lines;
-	b/=(float)lines;
-	if(i==0)return r;
-	if(i==1)return g;
-	return g;
-}
-
-bool in_bounds(struct e h,float bounds[3][2]){
-	if(h.r<bounds[0][0]||h.r>bounds[0][1])return false;
-	if(h.g<bounds[1][0]||h.g>bounds[1][1])return false;
-	if(h.b<bounds[2][0]||h.b>bounds[2][1])return false;
+bool in_bounds(float bounds[3][2],float val[3]){
+	for(int i=0;i<3;i++)if(val[i]<=bounds[i][0]||val[i]>bounds[i][1])return false;
 	return true;
 }
 
-void propagate(float r,float g,float l,int i){
-	int counts[2][2][2];
-	for(struct e h:emojis){
-		if(in_bounds(h,tree[i].bounds)){
-			int id[3]={h.r>r?1:0,h.g>g?1:0,h.b>l?1:0};
-			counts[id[0]][id[1]][id[2]]++;
+void prop(int id){
+	if(tree[id].finished||tree[id].end)return;
+	int rgb=tree[id].rgb;
+	float avg=0.,total=0.;
+	for(struct e e:emojis)
+		if(in_bounds(tree[id].bounds,e.val)){
+			avg+=e.val[rgb];
+			total+=1.;
+		}
+	avg/=total;
+cout<<"    "<<id<<": avg "<<avg<<" total "<<total;
+	tree[id].v=avg;
+	int counts[2]={0,0};
+	for(struct e e:emojis)
+		if(in_bounds(tree[id].bounds,e.val)){
+			if(e.val[rgb]>avg)counts[1]++;
+			else counts[0]++;
+		}
+cout<<' '<<counts[0]<<' '<<counts[1]<<'\n';
+	int h=tree.size();
+	tree[id].l=h;tree[id].r=h+1;
+	struct node tmp1,tmp2;
+	if(counts[0]==1){
+		tmp1.l=0;
+		for(int i=0;i<lines;i++)
+			if(in_bounds(tree[id].bounds,emojis[i].val)&&emojis[i].val[rgb]<=avg){
+				tmp1.l=i;break;
+			}
+		tmp1.end=true;
+		tmp1.finished=true;
+	}else if(counts[0]==0){
+		tmp1.l=0;
+		for(int i=0;i<lines;i++)
+			if(in_bounds(tree[id].bounds,emojis[i].val)){
+				tmp1.l=i;break;
+			}
+		tmp1.end=true;
+		tmp1.finished=true;
+	}else{
+		for(int i=0;i<3;i++)for(int j=0;j<2;j++)tmp1.bounds[i][j]=tree[id].bounds[i][j];
+		tmp1.bounds[rgb][0]=tree[id].bounds[rgb][0];
+		tmp1.bounds[rgb][1]=avg;
+		tmp1.rgb=(tree[id].rgb+1)%3;
+		bool dup=true;float only=-1.;
+		for(struct e e:emojis){
+			if(!in_bounds(tree[id].bounds,e.val)||e.val[rgb]>avg)continue;
+			if(only<0.)only=e.val[rgb];
+			else if(only!=e.val[rgb])dup=false;
+		}
+		if(avg==tree[id].bounds[rgb][0]||avg==0.||dup){
+			tmp1.l=0;
+			for(int i=0;i<lines;i++)
+				if(in_bounds(tree[id].bounds,emojis[i].val)){
+					tmp1.l=i;break;
+				}
+			tmp1.end=true;
+			tmp1.finished=true;
 		}
 	}
-	for(int a=0;a<2;a++)
-		for(int b=0;b<2;b++)
-			for(int c=0;c<2;c++)
-				if(counts[a][b][c]<2){
-					int h=tree.size();
-					struct node tmp;
-					tmp.end=true;
-					tmp.finalized=true;
-					// write id of emoji to tmp.next[0][0][0]
-					if(counts[a][b][c]==0){
-						for(int j=0;j<lines;j++)if(in_bounds(emojis[j],tree[i].bounds)){
-							tmp.next[0][0][0]=j;
-							break;
-						}
-					}else{
-						float bnd[3][2]={
-							{tree[i].bounds[0][0],tree[i].bounds[0][1]},
-							{tree[i].bounds[1][0],tree[i].bounds[1][1]},
-							{tree[i].bounds[2][0],tree[i].bounds[2][1]}};
-						bnd[0][a]=r;bnd[1][b]=g;bnd[2][c]=b;
-						for(int j=0;j<lines;j++)if(in_bounds(emojis[j],bnd)){
-							tmp.next[0][0][0]=j;
-							break;
-						}
-					}
-					tree[i].next[a][b][c]=h;
-					tree.push_back(tmp);
-				}else{
-					int h=tree.size();
-					struct node tmp;
-					// set bounds
-					for(int x=0;x<3;x++)for(int y=0;y<2;y++)tmp.bounds[x][y]=tree[i].bounds[x][y];
-					tmp.bounds[0][a]=r;
-					tmp.bounds[1][b]=g;
-					tmp.bounds[2][c]=l;
-					tree[i].next[a][b][c]=h;
-					tree.push_back(tmp);
+	if(counts[1]==1){
+		tmp2.l=0;
+		for(int i=0;i<lines;i++)
+			if(in_bounds(tree[id].bounds,emojis[i].val)&&emojis[i].val[rgb]>avg){
+				tmp2.l=i;break;
+			}
+		tmp2.end=true;
+		tmp2.finished=true;
+	}else if(counts[1]==0){
+		tmp2.l=0;
+		for(int i=0;i<lines;i++)
+			if(in_bounds(tree[id].bounds,emojis[i].val)){
+				tmp2.l=i;break;
+			}
+		tmp2.end=true;
+		tmp2.finished=true;
+	}else{
+		for(int i=0;i<3;i++)for(int j=0;j<2;j++)tmp2.bounds[i][j]=tree[id].bounds[i][j];
+		tmp2.bounds[rgb][0]=avg;
+		tmp2.bounds[rgb][1]=tree[id].bounds[rgb][1];
+		tmp2.rgb=(tree[id].rgb+1)%3;
+		bool dup=true;float only=-1.;
+		for(struct e e:emojis){
+			if(!in_bounds(tree[id].bounds,e.val)||e.val[rgb]<=avg)continue;
+			if(only<0.)only=e.val[rgb];
+			else if(only!=e.val[rgb])dup=false;
+		}
+		if(avg==tree[id].bounds[rgb][1]||avg==255.||dup){
+			tmp2.l=0;
+			for(int i=0;i<lines;i++)
+				if(in_bounds(tree[id].bounds,emojis[i].val)){
+					tmp2.l=i;break;
 				}
-	tree[i].r=r;tree[i].g=g;tree[i].b=l;
-	tree[i].finalized=true;
+			tmp2.end=true;
+			tmp2.finished=true;
+		}
+	}
+	tree.push_back(tmp1);
+	tree.push_back(tmp2);
+	tree[id].finished=true;
 }
 
-void iterate_print(){
-	int t=0;
-	for(struct node h:tree){
-		if(h.end){
-			int i=h.next[0][0][0];
-			cout<<t<<": ending node "<<i<<" with color "<<emojis[i].r<<' '<<emojis[i].g<<' '<<emojis[i].b<<'\n';
+void disp(){
+	int h=tree.size(),end=0,unres=0,res=0;
+	for(int j=0;j<h;j++){
+		cout<<j<<": ";
+		if(tree[j].end){
+			end++;
+			cout<<"emoji "<<tree[j].l<<" w color ";
+			for(int i=0;i<3;i++)cout<<emojis[tree[j].l].val[i]<<' ';
 		}else{
-			if(h.finalized){
-				cout<<t<<": split on "<<h.r<<' '<<h.g<<' '<<h.b<<": goto ";
-				for(int a=0;a<2;a++)for(int b=0;b<2;b++)for(int c=0;c<2;c++)cout<<h.next[a][b][c]<<' ';
-				cout<<'\n';
-			}else{
-				cout<<t<<": unfinalized bounds r["<<h.bounds[0][0]<<' '<<h.bounds[0][1]<<"] g[";
-				cout<<h.bounds[1][0]<<' '<<h.bounds[1][1]<<"] b["<<h.bounds[2][0]<<h.bounds[2][1]<<"]\n";
-			}
+			unres++;
+			if(tree[j].finished){
+				res++;unres--;
+				cout<<"split "<<tree[j].v<<" goto "<<tree[j].l<<' '<<tree[j].r;
+			}else cout<<"unresolved";
+			cout<<' '<<(tree[j].rgb==0?"red":(tree[j].rgb==1?"green":"blue"))<<" bounds ";
+			for(int k=0;k<3;k++){cout<<tree[j].bounds[k][0]<<' '<<tree[j].bounds[k][1]<<' ';}
 		}
-		t++;
+		cout<<'\n';
 	}
+	cout<<end<<" ending "<<res<<" resolved "<<unres<<" unresolved\n";
 }
 
 int main(){
 	fstream cin("parsed.txt");
 	for(int i=0;i<lines;i++){
 		char c;cin>>c;
-		float f;cin>>f;
-		emojis[i].r=f;cin>>c;
-		cin>>f;emojis[i].g=f;cin>>c;
-		cin>>f;emojis[i].b=f;
-		cin>>c;
+		for(int j=0;j<3;j++){cin>>emojis[i].val[j];cin>>c;}
 	}
+	/*
 	for(int i=0;i<lines;i++){
-		cout<<emojis[i].r<<' '<<emojis[i].g<<' '<<emojis[i].b<<'\n';
+		cout<<emojis[i].val[0]<<' '<<emojis[i].val[1]<<' '<<emojis[i].val[2]<<'\n';
 	}
+	*/
 	struct node first;
-	for(int i=0;i<3;i++){first.bounds[i][0]=0.;first.bounds[i][1]=255.;}
+	for(int i=0;i<3;i++){first.bounds[i][0]=-1.;first.bounds[i][1]=256.;}
+	first.rgb=0;
 	tree.push_back(first);
-	propagate(avg_range(first.bounds,0),avg_range(first.bounds,1),avg_range(first.bounds,2),0);
-	iterate_print();
+	//prop(0);
+	int id=0;
+	while(id<tree.size()){
+		prop(id);
+if(id>4310)break;
+		id++;
+	}
+	//cout<<'\n';
+	disp();
 	return 0;
 }
