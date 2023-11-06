@@ -81,7 +81,8 @@ int closestEmoji(color c,int id,int rgb){
   // splitting into 8 sectors based on combinations of red,green,blue, my algorithm splits first on red,
   // then splits on green, and then splits on blue. It's a bit complicated, but in practice is less prone
   // to error. Essentially, rgb is one of {0,1,2} representing either a split on 0(red), 1(green), 2(blue).
-  // Get the current node.
+  // Load the current node into memory. This is slightly more efficient than querying the arraylist every
+  // time the properties of the node need to be accessed, and takes up nearly no space.
   node n = tree.get(id);
   if(n.end){
     // for memory reasons we store the id of the output emoji in `l` rather than a separate property
@@ -109,7 +110,7 @@ void testClosestEmoji(color c){
   print("Output emoji: "+closestEmoji(c)+"\n\n");
 }
 
-// it does what it seems like it does
+// it does what it looks like it does
 color getRandomColor(){
   return color(random(255), random(255), random(255));
 }
@@ -117,7 +118,10 @@ color getRandomColor(){
 // we don't need draw() because we aren't drawing anything
 void setup(){
   setupOctree();
-  // print 10 tests
-  for(int i=0;i<10;i++)
+  int startTime = millis(),
+    k = 300;
+  // print k tests
+  for(int i=0;i<k;i++)
     testClosestEmoji(getRandomColor());
+  print(k+" lookups executed in "+(millis()-startTime)+" ms");
 }
