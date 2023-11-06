@@ -154,6 +154,19 @@ void disp(){
 	cout<<end<<" ending "<<res<<" resolved "<<unres<<" unresolved\n";
 }
 
+void dump(){
+	ofstream cout("octree_dumped.txt");
+	cout<<tree.size()<<'\n';
+	for(struct node n:tree){
+		if(n.end){
+			cout<<"e "<<n.l;
+		}else{
+			cout<<"n "<<n.v<<' '<<n.l<<' '<<n.r;
+		}
+		cout<<'\n';
+	}
+}
+
 int main(){
 	fstream cin("parsed.txt");
 	for(int i=0;i<lines;i++){
@@ -169,14 +182,12 @@ int main(){
 	for(int i=0;i<3;i++){first.bounds[i][0]=-1.;first.bounds[i][1]=256.;}
 	first.rgb=0;
 	tree.push_back(first);
-	//prop(0);
 	int id=0;
 	while(id<tree.size()){
 		prop(id);
-if(id>4310)break;
 		id++;
 	}
-	//cout<<'\n';
 	disp();
+	dump();
 	return 0;
 }
