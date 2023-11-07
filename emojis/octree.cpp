@@ -108,6 +108,7 @@ cout<<' '<<counts[0]<<' '<<counts[1]<<'\n';
 			if(only<0.)only=e.val[rgb];
 			else if(only!=e.val[rgb])dup=false;
 		}
+		// if only duplicates: fallback to end node
 		if(avg==tree[id].bounds[rgb][0]||avg==0.||dup){
 			tmp1.l=0;
 			for(int i=0;i<emojis.size();i++)
@@ -118,6 +119,7 @@ cout<<' '<<counts[0]<<' '<<counts[1]<<'\n';
 			tmp1.finished=true;
 		}
 	}
+	// basically the same, but with right endpoint instead
 	if(counts[1]==1){
 		tmp2.l=0;
 		for(int i=0;i<emojis.size();i++)
@@ -155,11 +157,14 @@ cout<<' '<<counts[0]<<' '<<counts[1]<<'\n';
 			tmp2.finished=true;
 		}
 	}
+	// append both sides to tree
 	tree.push_back(tmp1);
 	tree.push_back(tmp2);
+	// hopefully this node is finished
 	tree[id].finished=true;
 }
 
+// utility to print out tree
 void disp(){
 	int h=tree.size(),end=0,unres=0,res=0;
 	for(int j=0;j<h;j++){
