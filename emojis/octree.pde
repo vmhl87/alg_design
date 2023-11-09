@@ -111,7 +111,7 @@ int closestEmoji(float r, float g, float b,int id,int rgb){
     else cl=b;
     // if this value is bigger than our node's v(the "middle" value), choose the right node. Otherwise,
     //  choose the left node. Also, update rgb.
-    if(cl>tree[id].v)return closestEmoji(c,tree[id].r,(rgb+1)%3);
+    if(cl>tree[id].v)return closestEmoji(r,g,b,tree[id].r,(rgb+1)%3);
     else return closestEmoji(r,g,b,tree[id].l,(rgb+1)%3);
   }
 }
