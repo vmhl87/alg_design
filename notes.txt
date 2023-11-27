@@ -143,3 +143,69 @@ hash func must be fast
 == images ==
 
 processing stuff idk
+
+
+--- 27/11/23 ---
+
+== ADTs ==
+
+abstract data types
+
+== linked lists ==
+	later: stacks, queues, trees, graphs
+
+made up of nodes: node -> { value, next, [previous] }
+
+singly-linked lists:
+	*head -> first node -> second node -> etc. -> last node -> nil
+
+iterating over ll:
+	start at *head; call next() until next == nil
+
+*cannot randomly access arbitrary element n at its direct memory location; must iterate
+	additionally cannot traverse backwards
+
+doubly-linked lists: each node stores *next, *previous
+	*head -> first node <-> second <-> etc. <-> last -> nil
+                     v
+                    nil
+ops:
+	build:
+		node *current;
+		void alloc(string value){
+			current->next = new node();
+			current = current->next;
+			current->value = value;
+			current->next = nil;
+		}
+		node first; first.value = "W"; first.next = nil;
+		current = &first;
+		alloc("T");
+		alloc("Rocks!");
+
+	insert @ begin:
+		// pre: node *head, string val
+		node new; new.value = val;
+		new.next = head;
+		next = &new;
+
+	remove @ begin:
+		// pre: node *head
+		node *tmp = head->next;
+		delete head->next;
+		head = tmp;
+
+	insert at end:
+		// pre: node *head, string val
+		node *tmp = head;
+		while(tmp->next != nil) tmp = tmp->next;
+		tmp->next = new node();
+		(tmp->next)->value = val; (tmp->next)->next = nil;
+
+	insert at n:
+		// pre: node *head, int n, string val
+		node *tmp = head;
+		while(n-->0) tmp = tmp->next;
+		node *ptr = tmp;
+		tmp->next = new node();
+		(tmp->next)->value = val; (tmp->next)->next = ptr;
