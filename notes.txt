@@ -209,3 +209,42 @@ ops:
 		node *ptr = tmp;
 		tmp->next = new node();
 		(tmp->next)->value = val; (tmp->next)->next = ptr;
+
+--- 29/11/23 ---
+
+== stacks ==
+
+usually implemented with linked list ?
+
+last in first out queue structure
+
+push/pop ops
+
+implementation:
+
+ops:
+	Stack(): creates new stack
+
+	push(item): pushes item to stack
+
+	pop(): returns topmost item in stack, and pops
+
+	peek(): returns topmost item, does not modify
+
+	isEmpty(): does what it looks like it does
+
+	size(): read above
+
+s = Stack()
+op               stack              ret
+s.isEmpty()     {}                  True
+s.push(4)       {4}                 null
+s.push("dog")   {4,"dog"}           null
+s.peek()        {4,"dog"}           "dog"
+s.push(True)    {4,"dog",True}      null
+s.size()        {4,"dog",True}      3
+s.isEmpty()     {4,"dog",True}      False
+s.push(8.4)     {4,"dog",True,8.4}  null
+s.pop()         {4,"dog",True}      8.4
+s.pop()         {4,"dog"}           True
+s.size()        {4,"dog"}           2
