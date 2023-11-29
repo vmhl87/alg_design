@@ -31,7 +31,7 @@ class Stack:
 		return False
 
 	def size(self):
-		return self._start
+		return self._size
 
 	def isEmpty(self):
 		if self._start: return False

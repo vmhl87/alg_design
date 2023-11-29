@@ -20,22 +20,33 @@ class Stack:
 	def size(self):
 		return len(self._items)
 
-s = Stack()
+def reverseWord(word):
+	st = Stack()
 
-print(s.isEmpty())
+	for char in word:
+		st.push(char)
 
-s.push(4)
-s.push("dog")
+	ret = ""
 
-print(s.peek())
+	for char in word:
+		ret += st.pop()
 
-s.push(True)
+	return ret
 
-print(s.size())
-print(s.isEmpty())
+def stripped(word):
+	lowercase = word.lower()
+	
+	alphabet = [char for char in "abcdefghijklmnopqrstuvwxyz"]
 
-s.push(8.4)
+	ret = ""
 
-print(s.pop())
-print(s.pop())
-print(s.size())
+	for char in lowercase:
+		if char in alphabet:
+			ret += char
+
+	return ret
+
+def isPalindrome(word):
+	reversed = reverseWord(word)
+
+	return stripped(word) == stripped(reversed)
