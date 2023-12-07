@@ -1,0 +1,2 @@
+This program takes the image from a camera, divides it up into squares, and then searches through
+a list of 3,000 emojis to find the one with the closest color to the camera image. 

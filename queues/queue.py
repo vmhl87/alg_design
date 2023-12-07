@@ -1,6 +1,7 @@
-class Stack:
+class Queue:
 	def __init__(self):
 		self._start = False
+		self._end = False
 		self._size = 0
 
 	class Node:
@@ -8,16 +9,19 @@ class Stack:
 			self.item = item
 			self.next = False
 
-	def push(self, item):
+	def enqueue(self, item):
 		self._size += 1
-		if self._start:
+		if self._end:
 			tmp = self.Node(item)
-			tmp.next = self._start
-			self._start = tmp
+			self._end.next = tmp
+			self._end = tmp
+			if not self._start:
+				self._start = tmp
 		else:
 			self._start = self.Node(item)
+			self._end = self._start
 
-	def pop(self):
+	def dequeue(self):
 		if self._start:
 			self._size -= 1;
 			tmp = self._start.item
@@ -26,8 +30,8 @@ class Stack:
 		return False
 
 	def peek(self):
-		if self._start:
-			return self._start.item
+		if self._end:
+			return self._end.item
 		return False
 
 	def size(self):
