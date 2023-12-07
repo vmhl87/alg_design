@@ -45,9 +45,10 @@ def hotPotato(namelist, number):
 #	for i in range(number+1):
 #		print(namelist[i % len(namelist)])
 	q = Queue()
-	number += 1
-	for i in range(1+int(number/len(namelist))):
-		for name in namelist:
-			q.enqueue(name)
+	for name in namelist:
+		q.enqueue(name)
 	for i in range(number):
-		print(q.dequeue())
+		tmp = q.dequeue()
+		q.enqueue(tmp)
+		print(tmp)
+	print("Result: " + q.dequeue())

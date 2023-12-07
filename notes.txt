@@ -248,3 +248,31 @@ s.push(8.4)     {4,"dog",True,8.4}  null
 s.pop()         {4,"dog",True}      8.4
 s.pop()         {4,"dog"}           True
 s.size()        {4,"dog"}           2
+
+--- 7/12/23 ---
+
+== queues ==
+
+similar to stack: uses internal ll
+
+ops:
+	Queue(): ctor
+
+	enqueue(item): insert into end
+
+	dequeue(): return last item & pop
+
+	size(): self explanatory
+	isEmpty(): ^
+
+op                   contents            ret
+isEmpty           {}                     True
+enqueue(4)        {4}
+enqueue('dog')    {4,'dog'}
+enqueue(True)     {4,'dog',True}
+size              {4,'dog',True}         3
+isEmpty           {4,'dog',True}         False
+enqueue(8.4)      {4,'dog',True,8.4}
+dequeue           {'dog',True,8.4}       4
+dequeue           {True,8.4}             'dog'
+size              {True,8.4}             2
