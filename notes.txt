@@ -276,3 +276,18 @@ enqueue(8.4)      {4,'dog',True,8.4}
 dequeue           {'dog',True,8.4}       4
 dequeue           {True,8.4}             'dog'
 size              {True,8.4}             2
+
+--- 11/12/23 ---
+
+== deque ==
+
+double ll
+
+ops:
+	ctor()
+	addFront(item)
+	addRear(item)
+	removeFront()
+	removeRear()
+	size()
+	isEmpty()

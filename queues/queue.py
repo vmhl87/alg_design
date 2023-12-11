@@ -23,7 +23,7 @@ class Queue:
 
 	def dequeue(self):
 		if self._start:
-			self._size -= 1;
+			self._size -= 1
 			tmp = self._start.item
 			self._start = self._start.next
 			return tmp
