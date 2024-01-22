@@ -291,3 +291,156 @@ ops:
 	removeRear()
 	size()
 	isEmpty()
+
+--- 4/1/24 ---
+
+== trees, graphs ==
+
+def: list of nodes and edges btw them
+
++-------------+------+------------+
+| application | item | connection |
++-------------+------+------------+
+| map         | intr | roads      |
++-------------+------+------------+
+| web content | page | hyperlink  |
++-------------+------+------------+
+| circuit     | load | wire       |
++-------------+------+------------+
+| schedule    | prsn | event      |
++-------------+------+------------+
+| commerce    | prsn | trade      |
++-------------+------+------------+
+| matching    | prsn | college    |
++-------------+------+------------+
+| comp net    | comp | connection |
++-------------+------+------------+
+| software    | intf | port       |
++-------------+------+------------+
+| social net  | prsn | friendship |
++-------------+------+------------+
+
+simple path:
+0---1
+     \
+      2---3
+
+non-simple path:
+0---1   7----8
+     \ /
+  5--2,6
+   \   \
+    4---3
+
+--- 8/1/24 ---
+
+cycles in graphs
+
+a path that loops
+
+simple cycle: no repeated v. except first,last
+
+tree:
+   4 5 6
+    \|/
+     3    8
+     |   /
+     2--7--9
+    /
+0--1
+    \      12
+     \     /
+     10--11--13
+      |
+     14
+     / \
+    15 16
+
+--- 10/1/24 ---
+
+implementation of graphs in a standardized programming language (Python)
+
+methods:
+	ctor(int v): init graph datastructure with v vertices
+
+	ctor(str i): create graph from input stream i
+
+	v(), e(): counts of v,e
+
+	add_edge(v,w): what it says it does
+
+	adj(v): vertices adjacent to v; iterator
+
+	dump(),print(): what it sounds like
+
+implement with a form of adjacency matrix; links nodes to one another
+theoretically implemented with a 2d bool arr
+
+ex: graph
+          b
+         /
+        a
+       /
+    d-s
+   /  |
+  e---c
+ /|   |
+g |   |
+ \|   |
+  k---f
+       \
+        j
+
+  a b c d e f g j k s
+a   1               1
+b 1
+c         1 1       1
+d         1         1
+e     1 1     1   1
+f     1         1 1
+g         1       1
+j           1
+k         1 1 1
+s 1   1 1
+
+--- 18/1/24 ---
+
+== maze running ==
+
+maze vs graph? functionally identical?
+
+maze      |       graph
+----------+------------
+intersect |      vertex
+----------+------------
+path      |        edge
+
+tremaux: originates from ball of yarn implementation
+
+take any unmarked passage, unrolling a string behind you (save a stack of vertices previously traversed)
+additionally, mark vertices as you pass them
+
+retrace steps using string (stack) when approaching marked intersection
+
+retrace steps when no unmarked options remaining at intersection
+
+(essentially depth first search)
+
+  b   d
+ /   /
+a   c---e
+ \ / \  |
+  s   f |
+   \ /  |
+    g---h
+
+push items on stack and mark as visited
+recursively either push next unvisited node onto stack or if impossible backtrack
+
+dfs can find if 2 given vertices are connected or not
+
+also, how many components does it have?
+
+single source path problem:
+	given graph, source vertex S, is there a path from S to given target vertex - if so find path
+

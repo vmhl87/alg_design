@@ -1,0 +1,10 @@
+a b s
+b a
+c e f s
+d e s
+e c d g k
+f c j k
+g e k
+j f
+k e f g
+s a c d
