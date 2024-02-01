@@ -137,7 +137,7 @@ int main(){
 
 	// progress bar
 	prc=0; draw_percentage(0);
-	int id=0,sum=name_len*2+akas_len*2;
+	long long id=0,sum=name_len*2+akas_len*2;
 	
 	// write actor alphanumerics to actors_apn.list
 	for(long long i=0;i<name_len;i++){
