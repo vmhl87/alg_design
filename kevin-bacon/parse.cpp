@@ -12,13 +12,15 @@
 using namespace std;
 
 // helper utility to pretty-print progress bars
-void draw_percentage(int p) {
+void draw_percentage(long long p) {
 	cout << "\r[";
-	for(int i=0;i<200;i+=5){
-		if(i<=p*2) cout << '=';
+	for(long long i=0;i<100;i+=2){
+		if(i<p) cout << '=';
+		else if(i==p) cout << '-';
 		else cout << ' ';
 	}
-	cout << "]  "; fflush(stdout);
+	cout << "] (" << p << "%)  ";
+	fflush(stdout);
 	if(p>=100) cout << '\n';
 }
 
@@ -43,9 +45,9 @@ int main(){
 	string nil;
 
 	// lengths of each file (precomputed)
-	const int name_len = 13205098,
-	          akas_len = 38592396,
-	          prin_len = 60226529;
+	const long long name_len = 13205098,
+	                akas_len = 38592396,
+	                prin_len = 60226529;
 
 	//  initialize first set of datastructures - arrays  \
 		to store the names of actors, and the alphanum   \
@@ -70,8 +72,8 @@ int main(){
 	getline(names, nil);
 
 	// prc (percent) used for progress bar
-	int prc=0; draw_percentage(0);
-	for(int i=0;i<name_len;i++){
+	long long prc=0; draw_percentage(0);
+	for(long long i=0;i<name_len;i++){
 		// input entire line
 		string s; getline(names, s);
 		//  sw (swap) stores whether or not we have    \
@@ -95,7 +97,7 @@ int main(){
 		// update hashmap
 		actor_index[actors_apn[i]] = i;
 		// calculate percent value and print if changed
-		int nprc = (i*100+100)/name_len;
+		long long nprc = (i*100+100)/name_len;
 		if(nprc>prc){
 			draw_percentage(nprc); prc = nprc;
 		}
@@ -108,7 +110,7 @@ int main(){
 	getline(akas, nil);
 
 	prc=0; draw_percentage(0);
-	for(int i=0;i<akas_len;i++){
+	for(long long i=0;i<akas_len;i++){
 		string s; getline(akas, s);
 		//  similar to how we parsed names.basics.tsv, except \
 			there is an extra symbol between name and apn, so \
@@ -124,7 +126,7 @@ int main(){
 			if(sw==2) movies_name[i] += c;
 		}
 		movie_index[movies_apn[i]] = i;
-		int nprc = (i*100+100)/akas_len;
+		long long nprc = (i*100+100)/akas_len;
 		if(nprc>prc){
 			draw_percentage(nprc); prc = nprc;
 		}
@@ -138,10 +140,10 @@ int main(){
 	int id=0,sum=name_len*2+akas_len*2;
 	
 	// write actor alphanumerics to actors_apn.list
-	for(int i=0;i<name_len;i++){
+	for(long long i=0;i<name_len;i++){
 		// write through act_apn (std::ostream)
 		act_apn << actors_apn[i] << '\n';
-		int nprc = (id++*100+100)/sum;
+		long long nprc = (id++*100+100)/sum;
 		if(nprc>prc){
 			draw_percentage(nprc); prc = nprc;
 		}
@@ -150,9 +152,9 @@ int main(){
 	act_apn.close();
 
 	// write actor names to actors_name.list
-	for(int i=0;i<name_len;i++){
+	for(long long i=0;i<name_len;i++){
 		act_name << actors_name[i] << '\n';
-		int nprc = (id++*100+100)/sum;
+		long long nprc = (id++*100+100)/sum;
 		if(nprc>prc){
 			draw_percentage(nprc); prc = nprc;
 		}
@@ -160,9 +162,9 @@ int main(){
 	act_name.close();
 
 	// write movie alphanumerics to movies_apn.list
-	for(int i=0;i<akas_len;i++){
+	for(long long i=0;i<akas_len;i++){
 		mov_apn << movies_apn[i] << '\n';
-		int nprc = (id++*100+100)/sum;
+		long long nprc = (id++*100+100)/sum;
 		if(nprc>prc){
 			draw_percentage(nprc); prc = nprc;
 		}
@@ -170,9 +172,9 @@ int main(){
 	mov_apn.close();
 	
 	// write movie names to movies_name.list
-	for(int i=0;i<akas_len;i++){
+	for(long long i=0;i<akas_len;i++){
 		mov_name << movies_name[i] << '\n';
-		int nprc = (id++*100+100)/sum;
+		long long nprc = (id++*100+100)/sum;
 		if(nprc>prc){
 			draw_percentage(nprc); prc = nprc;
 		}
@@ -181,24 +183,26 @@ int main(){
 
 	// clean up unnecessary arrays
 	cout << "Deleting arrays\n";
+	
+	draw_percentage(0);
 
 	//  note that we are using c++ and must explicitly delete \
 		variables that are allocated on the heap
 	delete[] actors_apn;
 
-	cout << "\r25%";
+	draw_percentage(25);
 
 	delete[] actors_name;
 
-	cout << "\r50%";
+	draw_percentage(50);
 
 	delete[] movies_apn;
 	
-	cout << "\r75%";
+	draw_percentage(75);
 
 	delete[] movies_name;
 
-	cout << "\r100%\n";
+	draw_percentage(100);
 	
 	// build adjacency lists for movies and actors
 	cout << "Building adjacencies\n";
@@ -221,7 +225,7 @@ int main(){
 	getline(princ, nil);
 
 	prc=0; draw_percentage(0);
-	for(int i=0;i<prin_len;i++){
+	for(long long i=0;i<prin_len;i++){
 		string s; getline(princ, s);
 		// declare variables for movie apn and actor name
 		string apn, name;
@@ -253,7 +257,7 @@ int main(){
 			    .insert(actor_index[name]);
 		}
 		// progress bar
-		int nprc = (i*100+100)/prin_len;
+		long long nprc = (i*100+100)/prin_len;
 		if(nprc>prc){
 			draw_percentage(nprc); prc = nprc;
 		}
@@ -265,7 +269,7 @@ int main(){
 	//  write actor adjacency lists to actor_adj.list through \
 		act_adj (std::ostream)
 	prc=0; draw_percentage(0);
-	for(int i=0;i<name_len;i++){
+	for(long long i=0;i<name_len;i++){
 		//  print out index of this actor to mantain consistency        \
 			(however, they will all be in order so this is not strictly \
 			necessary to do)
@@ -277,7 +281,7 @@ int main(){
 		// print newline
 		act_adj << '\n';
 		// progress
-		int nprc = (i*100+100)/name_len;
+		long long nprc = (i*100+100)/name_len;
 		if(nprc>prc){
 			draw_percentage(nprc); prc = nprc;
 		}
@@ -287,13 +291,13 @@ int main(){
 	
 	// same thing, but for movie adj sets
 	prc=0; draw_percentage(0);
-	for(int i=0;i<akas_len;i++){
+	for(long long i=0;i<akas_len;i++){
 		mov_adj << i;
 		for(auto x=movie_adj[i].begin();x!=movie_adj[i].end();x++){
 			mov_adj << ' ' << *x;
 		}
 		mov_adj << '\n';
-		int nprc = (i*100+100)/akas_len;
+		long long nprc = (i*100+100)/akas_len;
 		if(nprc>prc){
 			draw_percentage(nprc); prc = nprc;
 		}
@@ -304,13 +308,15 @@ int main(){
 		on the stack and do not need to be explicitly deallocated
 	cout << "Cleaning\n";
 	
+	draw_percentage(0);
+	
 	delete[] actor_adj;
 	
-	cout << "\r50%";
+	draw_percentage(50);
 	
 	delete[] movie_adj;
 
-	cout << "\r100%\n";
+	draw_percentage(100);
 
 	// hopefully the program got here without issues!
 	cout << "Exiting\n";
