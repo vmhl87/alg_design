@@ -270,10 +270,8 @@ int main(){
 		act_adj (std::ostream)
 	prc=0; draw_percentage(0);
 	for(long long i=0;i<name_len;i++){
-		//  print out index of this actor to mantain consistency        \
-			(however, they will all be in order so this is not strictly \
-			necessary to do)
-		act_adj << i;
+		//  print out number of adjacent actors
+		act_adj << actor_adj[i].size();
 		// loop through std::unordered_set<T> with an iterator, and print
 		for(auto x=actor_adj[i].begin();x!=actor_adj[i].end();x++){
 			act_adj << ' ' << *x;
@@ -292,7 +290,7 @@ int main(){
 	// same thing, but for movie adj sets
 	prc=0; draw_percentage(0);
 	for(long long i=0;i<akas_len;i++){
-		mov_adj << i;
+		mov_adj << movie_adj[i].size();
 		for(auto x=movie_adj[i].begin();x!=movie_adj[i].end();x++){
 			mov_adj << ' ' << *x;
 		}
