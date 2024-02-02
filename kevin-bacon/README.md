@@ -1,6 +1,6 @@
 ### Overview
 
-Hello! This is a short overview of how my program(s) work. The code isn't very stylistically convoluted, (for once) but it might be unclear exactly how it is working.
+Hello! This is a short overview of how my program(s) work. The code isn't very stylistically convoluted, (for once), but it might be unclear exactly how it is working.
 
 ### The Kevin Bacon Problem
 
@@ -271,3 +271,28 @@ Not only do we see which actor is connected to which, but through which movie!
 
 This is a somewhat simplified explanation. Feel free to read the source code of both my c++ and Python implementations. (The Python implementation is not commented, but is
 essentially the same code, minus the progress bars, because those did not work well with Python input/output streams.)
+
+### Compiling
+
+If you want to run this yourself, an IDE like VSCode might work. Alternatively, a command-line compiler like `g++` or `clang++` will work.
+
+```
+$ g++ parse.cpp -o ./parse.out
+$ ./parse.out
+<-- program output -->
+$ g++ traverse.cpp -o ./traverse.out
+$ ./traverse.cpp
+<-- program output -->
+```
+
+I'm on a Linux system with the GNU c++ compiler (g++) installed, so compilation may be different for you.
+
+### A note on time
+
+Even my reasonably well optimized c++ parsing script takes over 4 minutes to run on my desktop, and it's a pretty powerful machine. The data involved is simply so large
+and needs to be interconnected to a very high degree that there is no way to avoid direct computation of everything.
+
+This is also where low-level languages are very useful. Python is a very easygoing language, with loose syntax. While this is good for some applications, it is less clear
+exactly what operations are running under the hood - for example, what is actually happening in the loop `for i in range(10):`?
+
+c++ would generally use something similar to `for(int i=0; i<10; i++){}`, which is much more direct and clear. Even iterator-based loops are more clear in c++.
