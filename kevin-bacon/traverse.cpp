@@ -19,6 +19,7 @@ typedef struct{
 	int id;
 	int n_adj;
 	int *adj;
+	bool init = 0;
 } node;
 
 //  datastructure to hold node in traversal (holds depth, index, and which \
@@ -137,42 +138,56 @@ void search(bool first) {
 	cout << "Moving through graph\n";
 	
 	// keep track of "front node"
-	int iter = 0;
+	int iter = 0, depth = 0;
 	traverse_node front = search_queue[0];
 	
+	// we haven't found him yet!
+	bool found_kevin_bacon = 0;
+	// well, unless we started with him..
+	if(actor == "Kevin Bacon") found_kevin_bacon = 1;
+	
 	// index of Kevin Bacon is 101
-	while(!front.is_act || front.id != 101){
+	while(!found_kevin_bacon && front_index < search_queue.size()){
 		// update front node
 		front = search_queue[front_index];
 		front_index++;
-
+		
+		/*
+		cout << front.id << " | ";
+		if(front.is_act) cout << an[front.id];
+		else cout << vn[front.id];
+		cout << "\n\n";
+		*/
+		
 		bool finished = 0;
 		
-		// I am using a bistate graph
+		// bistate graph - nodes alternate between actor and movie
 		if(front.is_act){
 			// loop through all adjacent and append to queue
-			for(int i=0;i<al[front.id].n_adj;i++){
+			if(al[front.id].init) for(int i=0;i<al[front.id].n_adj;i++){
 				if(movies_visited.find(al[front.id].adj[i])
 				!=movies_visited.end()) continue;
 				movies_visited.insert(al[front.id].adj[i]);
 				search_queue.push_back(
 					movie_node_at(
-						al[front.id].adj[i], front.depth+1, front_index
+						al[front.id].adj[i], front.depth+1, iter
 					)
 				);
 			}
 		}else{
-			for(int i=0;i<vl[front.id].n_adj;i++){
+			if(vl[front.id].init) for(int i=0;i<vl[front.id].n_adj;i++){
 				if(actors_visited.find(vl[front.id].adj[i])
 				!=actors_visited.end()) continue;
 				actors_visited.insert(vl[front.id].adj[i]);
 				search_queue.push_back(
 					actor_node_at(
-						vl[front.id].adj[i], front.depth+1, front_index
+						vl[front.id].adj[i], front.depth+1, iter
 					)
 				);
+				// found him!
 				if(vl[front.id].adj[i] == 101){
 					front = search_queue[search_queue.size()-1];
+					found_kevin_bacon = 1;
 					finished = 1;
 					break;
 				}
@@ -181,8 +196,10 @@ void search(bool first) {
 
 		if(finished) break;
 		
+		depth = front.depth;
+		
 		// update depth
-		if(iter%1337==0){
+		if(iter%13==0){
 			cout << "\rDepth " << front.depth << " (" << iter << " iterations)";
 			fflush(stdout);
 		}
@@ -190,7 +207,15 @@ void search(bool first) {
 		iter++;
 	}
 	
-	// if we exited the loop, we probably found Kevin Bacon
+	if(!found_kevin_bacon){
+		cout << "\nCouldn't find a path from " << actor
+			 << " to Kevin Bacon.\n\n";
+		
+		// rerun program
+		search(0);
+		return;
+	}
+	
 	cout << "\nFound Kevin Bacon!\n";
 	
 	// because we need to backtrace, we use a stack
@@ -198,11 +223,13 @@ void search(bool first) {
 	
 	//  while front is not the root node (from -1), backtrace to its \
 		root node
-	while(front.from+1){
+	while(front.from+1 && depth--> -3){
 		path.push(front);
 		
 		front = search_queue[front.from];
 	}
+	
+	if(depth < -2) cout << "An error might have occured.\n";
 	
 	// print out the path
 	cout << "Path:\n";
@@ -215,12 +242,11 @@ void search(bool first) {
 		path.pop();
 		
 		if(node.is_act){
-			cout << " --> ";
 			// get name from namelist and print
 			cout << an[node.id];
 			if(node.id == 101) break;
 		}else{
-			//cout << " --- (" << vn[node.id] <<  ") --> ";
+			cout << " --- (" << vn[node.id] <<  ") --> ";
 		}
 	}
 	
@@ -288,6 +314,7 @@ int main() {
 		for(int j=0;j<n_adjacent;j++){
 			act_adj >> act_adjlist[i].adj[j];
 		}
+		act_adjlist[i].init = 1;
 		progress(i*100/(name_len+akas_len));
 	}
 	
@@ -298,6 +325,7 @@ int main() {
 		for(int j=0;j<n_adjacent;j++){
 			mov_adj >> mov_adjlist[i].adj[j];
 		}
+		mov_adjlist[i].init = 1;
 		progress((i+name_len+1)*100/(name_len+akas_len));
 	}
 	

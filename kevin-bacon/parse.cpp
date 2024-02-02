@@ -15,8 +15,8 @@ using namespace std;
 void draw_percentage(long long p) {
 	cout << "\r[";
 	for(long long i=0;i<100;i+=2){
-		if(i<p) cout << '=';
-		else if(i==p) cout << '-';
+		if(i<p-1) cout << '=';
+		else if(i==p-1) cout << '-';
 		else cout << ' ';
 	}
 	cout << "] (" << p << "%)  ";
@@ -115,17 +115,21 @@ int main(){
 		//  similar to how we parsed names.basics.tsv, except \
 			there is an extra symbol between name and apn, so \
 			we store swaps as an integer count instead of bool
-		int sw=0;
+		int sw=0, priority=0;
+		string lang;
 		for(char c:s){
 			if(c=='	'){
-				if(sw==2) break;
+				if(sw==3) break;
 				sw++; continue;
 			}
 			// append character to correct string
 			if(sw==0) movies_apn[i] += c;
+			if(sw==1) priority = priority*10 + (c-'0');
 			if(sw==2) movies_name[i] += c;
+			if(sw==3) lang += c;
 		}
-		movie_index[movies_apn[i]] = i;
+		if(lang == "US" || lang == "EN")
+			movie_index[movies_apn[i]] = i;
 		long long nprc = (i*100+100)/akas_len;
 		if(nprc>prc){
 			draw_percentage(nprc); prc = nprc;
@@ -228,33 +232,30 @@ int main(){
 	for(long long i=0;i<prin_len;i++){
 		string s; getline(princ, s);
 		// declare variables for movie apn and actor name
-		string apn, name;
+		string apn, name, actor;
 		// similar to how we parsed movie titles
 		int sw = 0;
-		// not all entries in principals are actors
-		bool actor = 0;
 		for(char c:s){
 			if(c=='	'){
+				if(sw==3) break;
 				sw++; continue;
 			}
 			if(sw==0) apn += c;
 			if(sw==2) name += c;
-			if(sw==3){
-				//  if three swaps have happened, we are at the   \
-					entry storing the position of the actor - and \
-					if it starts with 'a' they are an actor/actress
-				if(c=='a') actor=1;
-				break;
-			}
+			if(sw==3) actor += c;
 		}
-		// if the character was an actor, insert into adjacency sets
-		if(actor){
+		//  if the character was an actor, insert into adjacency sets   \
+			additionally for failiure protection we will make sure that \
+			the value we are querying exists in the hashmaps
+		if((actor == "actor" || actor == "actress") &&
+		actor_index.find(name)!=actor_index.end() &&
+		movie_index.find(apn)!=movie_index.end()){
 			//  here we use the indexing hashmaps to convert from apn \
 				to integer index efficiently
-			actor_adj[actor_index[name]]
-			    .insert(movie_index[apn]);
-			movie_adj[movie_index[apn]]
-			    .insert(actor_index[name]);
+				actor_adj[actor_index[name]]
+					.insert(movie_index[apn]);
+				movie_adj[movie_index[apn]]
+					.insert(actor_index[name]);
 		}
 		// progress bar
 		long long nprc = (i*100+100)/prin_len;
@@ -262,6 +263,25 @@ int main(){
 			draw_percentage(nprc); prc = nprc;
 		}
 	}
+	
+	/*
+	for(int i=0;i<10;i++){
+		cout << actors_name[i] << ":\n";
+		for(auto x=actor_adj[i].begin();x!=actor_adj[i].end();x++){
+			cout<<movies_name[*x]<<"  |  ";
+		}
+		cout<<'\n';
+	}
+	cout<<'\n';
+	for(int i=0;i<10;i++){
+		cout << movies_name[i] << ":\n";
+		for(auto x=movie_adj[i].begin();x!=movie_adj[i].end();x++){
+			cout<<actors_name[*x]<<"  |  ";
+		}
+		cout<<'\n';
+	}
+	return 0;
+	*/
 	
 	// write adjacency sets to file
 	cout << "Writing to files\n";
