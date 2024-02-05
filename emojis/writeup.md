@@ -12,7 +12,7 @@ The performance improvements of a {log n} algorithm were too big to ignore, howe
 
 When we think about traditional binary search, we usually picture a list of objects, of which we divide in half, and see if our target is on the left or right side.
 
-```
+```js
 {* * * * ! * * *}
  * * * *{! * * *}
  * * * *{! *}* *
@@ -21,7 +21,7 @@ When we think about traditional binary search, we usually picture a list of obje
 
 However, if we compare the search paths of binary search of elements that are close together on the list, we can notice:
 
-```
+```js
 {* ! * * * * * *}  {* * ! * * * * *}  {* * * ! * * * *}
 {* ! * *}* * * *   {* * ! *}* * * *   {* * * !}* * * *
 {* !}* * * * * *    * *{! *}* * * *    * *{* !}* * * *
@@ -30,7 +30,7 @@ However, if we compare the search paths of binary search of elements that are cl
 
 Items close together on the list share parts of the search path with one another, and items farther apart share less of the search path with one another. In fact, we can notice that two items will share the same search path up until a point, where they diverge, and no longer have the same search path after that point. We can see that these search paths in fact make up a binary tree.
 
-```
+```js
      {* * * *}
       /     \
 {* *}* *   * *{* *}
