@@ -83,6 +83,9 @@ traverse_node movie_node_at(int id) {
 	return movie_node_at(id, 0, -1);
 }
 
+// location of kevin bacon in the namelist
+int kb_loc = 101;
+
 // asks user for actor name until "exit" is entered
 void search(bool first) {
 	// ask for input, and display tip on first run
@@ -185,7 +188,7 @@ void search(bool first) {
 					)
 				);
 				// found him!
-				if(vl[front.id].adj[i] == 101){
+				if(vl[front.id].adj[i] == kb_loc){
 					front = search_queue[search_queue.size()-1];
 					found_kevin_bacon = 1;
 					finished = 1;
@@ -244,7 +247,7 @@ void search(bool first) {
 		if(node.is_act){
 			// get name from namelist and print
 			cout << an[node.id];
-			if(node.id == 101) break;
+			if(node.id == kb_loc) break;
 		}else{
 			cout << " --- (" << vn[node.id] <<  ") --> ";
 		}
@@ -349,6 +352,24 @@ int main() {
 	mov_name.close();
 	
 	progress(100);
+
+	// check if Kevin Bacon is at position we thought
+	if(act_namelist[kb_loc]!="Kevin Bacon"){
+		cout << "Woah, Kevin Bacon is no longer in index " << kb_loc << "\n";
+		kb_loc = -1;
+		for(;kb_loc<name_len;kb_loc++){
+			if(act_namelist[kb_loc]=="Kevin Bacon"){
+				cout << "Found Kevin Bacon at index " << kb_loc << "!\n";
+				break;
+			}
+		}
+		if(kb_loc+1)
+			cout << "Temporarily updating index...\n";
+		else{
+			cout << "Couldn't find proper index, defaulting to 101\n";
+			kb_loc = 101;
+		}
+	}
 	
 	cout << "Ready\n";
 	
