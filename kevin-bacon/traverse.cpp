@@ -85,6 +85,7 @@ traverse_node movie_node_at(int id) {
 
 // location of kevin bacon in the namelist
 int kb_loc = 101;
+string target_actor = "Kevin Bacon";
 
 // asks user for actor name until "exit" is entered
 void search(bool first) {
@@ -147,7 +148,7 @@ void search(bool first) {
 	// we haven't found him yet!
 	bool found_kevin_bacon = 0;
 	// well, unless we started with him..
-	if(actor == "Kevin Bacon") found_kevin_bacon = 1;
+	if(actor == target_actor) found_kevin_bacon = 1;
 	
 	// index of Kevin Bacon is 101
 	while(!found_kevin_bacon && front_index < search_queue.size()){
@@ -212,14 +213,14 @@ void search(bool first) {
 	
 	if(!found_kevin_bacon){
 		cout << "\nCouldn't find a path from " << actor
-			 << " to Kevin Bacon.\n\n";
+			 << " to " << target_actor << ".\n\n";
 		
 		// rerun program
 		search(0);
 		return;
 	}
 	
-	cout << "\nFound Kevin Bacon!\n";
+	cout << "\nFound " << target_actor << "!\n";
 	
 	// because we need to backtrace, we use a stack
 	stack<traverse_node> path;
@@ -259,7 +260,7 @@ void search(bool first) {
 	search(0);
 }
 
-int main() {
+int main(int argc, char *argv[]) {
 	// initialze file streams
 	cout << "Opening file streams\n";
 
@@ -353,18 +354,33 @@ int main() {
 	
 	progress(100);
 
+	// read command line args
+	bool update_target_actor = 0;
+	for(int i=1;i<argc;i++){
+		string arg = argv[i];
+		// cout << "arg " << i << ": [" << argv[i] << "]\n";
+		if(update_target_actor){
+			update_target_actor = 0;
+			target_actor.clear();
+			target_actor += argv[i];
+			cout << "Using target actor " << target_actor << '\n';
+			continue;
+		}
+		if(arg == "--target") update_target_actor = 1;
+	}
+
 	// check if Kevin Bacon is at position we thought
-	if(act_namelist[kb_loc]!="Kevin Bacon"){
-		cout << "Woah, Kevin Bacon is no longer in index " << kb_loc << "\n";
+	if(act_namelist[kb_loc]!=target_actor){
+		cout << target_actor << " is not at index " << kb_loc << ", updating\n";
 		kb_loc = -1;
 		for(;kb_loc<name_len;kb_loc++){
-			if(act_namelist[kb_loc]=="Kevin Bacon"){
-				cout << "Found Kevin Bacon at index " << kb_loc << "!\n";
+			if(act_namelist[kb_loc]==target_actor){
+				cout << "Found " << target_actor << " at index " << kb_loc << "!\n";
 				break;
 			}
 		}
 		if(kb_loc+1)
-			cout << "Temporarily updating index...\n";
+			cout << "Updating index...\n";
 		else{
 			cout << "Couldn't find proper index, defaulting to 101\n";
 			kb_loc = 101;
