@@ -444,3 +444,154 @@ also, how many components does it have?
 single source path problem:
 	given graph, source vertex S, is there a path from S to given target vertex - if so find path
 
+--- 9/2/24 ---
+
+== dijkstra's algorithm ==
+
+BFS for weighted graphs - requires priority queue (?) or other implementation of appendable sort
+
+graph:
+
+    b---3---e
+   /|\     / \
+  2 | 1   4   9
+ /  |  \ /     \
+a   6   d       g
+ \  |          /
+  5 |         7
+   \|        /
+    c---8---f
+
+start from a, search for unexplored points, they become candidates for next move
+
+a -> b,c candidates
+
+set b,c to their current path cost if better than current
+
+b,c -> 2,5
+
+choose candidate with lowest cost
+
+* -> b
+
+add next candidates
+
+b -> e,d candidates
+
+set
+
+e,d -> 5,3
+b -\-> 8
+
+choose
+
+* -> d
+
+d adds no candidates, c best
+
+* -> c
+
+add f
+
+c -> f candidate
+
+set
+
+f -> 13
+
+choose
+
+e best
+
+add g
+
+e -> g candidate
+
+g -> 14
+
+practice:
+
+    b--9->d
+   >|     ^\
+  7 |     | 1
+ /  |     |  v
+a   2     4   f
+ \  |     |  ^
+ 12 |     | 5
+   >v     |/
+    c-10->e
+
+x a 0
+a b 7
+b c 9
+b d 16
+c e 19
+d f 17
+
+* -> a
+b,c -> 7,12 (a)
+* -> b
+c,d -> 9,16 (b)
+* -> c
+e -> 19 (c)
+* -> d
+f -> 17 (d)
+* -> f
+* -> e
+
+finished:
+
+  b--d
+ /|   \
+a |    f
+  |
+  c--e
+
+practice:
+
+a | b20 f10 g25
+b | c15 g3
+c | d3
+d | e4 g10
+e |
+f | c20 e30
+g | c2 f3
+
+x a 0
+a b 20
+g c 25
+c d 28
+d e 32
+a f 10
+b g 23
+
+*a a>bfg *f f>ce *b b>g *g g>c *c c>d *d d>e
+
+  a
+ / \
+f   b
+   /
+  g
+   \
+e   c
+ \ /
+  d
+
+== types of search algorithms ==
+
+1. uninformed search
+	* linear search
+	* binary search
+	* DFS, BFS
+
+	algorithms don't know anything about what they are searching for &
+	where to search for it; they don't know where to head to optimally
+	find the target, or the best chances
+
+2. informed search
+	algorithm is aware of where the best chances are of finding the target
+	and the algorithm moves in this direction
+
+	heuristic search is informed search technique that does not necessarily
+	find the optimal path, but finds a reasonably good path - finds earliest
+	path rather than fastest
