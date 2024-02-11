@@ -13,13 +13,13 @@ using namespace std;
 
 // helper utility to pretty-print progress bars
 void draw_percentage(long long p) {
-	cout << "\r[";
+	cout << "\r[\e[0;34m";
 	for(long long i=0;i<100;i+=2){
 		if(i<p-1) cout << '=';
 		else if(i==p-1) cout << '-';
 		else cout << ' ';
 	}
-	cout << "] (" << p << "%)  ";
+	cout << "\e[0m] (" << p << "%)  ";
 	fflush(stdout);
 	if(p>=100) cout << '\n';
 }
