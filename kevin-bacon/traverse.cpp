@@ -36,13 +36,13 @@ long long prc=100;
 void progress(long long p) {
 	if(p==100||p>prc||(p==0&&prc>0)) prc = p;
 	else return;
-	cout << "\r[";
+	cout << "\r[\e[0;34m";
 	for(long long i=0;i<100;i+=2){
 		if(i<p-1) cout << '=';
 		else if(i==p-1) cout << '-';
 		else cout << ' ';
 	}
-	cout << "] (" << p << "%)  ";
+	cout << "\e[0m] (" << p << "%)  ";
 	fflush(stdout);
 	if(p>=100) cout << '\n';
 }
@@ -91,14 +91,16 @@ string target_actor = "Kevin Bacon";
 void search(bool first) {
 	// ask for input, and display tip on first run
 	if(first) cout << "Enter the name of an actor, or 'exit' to exit:\n";
-	cout << "> ";
+	cout << "> \e[0;32m";
 	string actor; getline(cin, actor);
+	
+	cout << "\e[0m";
 	
 	// exit if exit is entered
 	if(actor == "exit") return;
 	
 	// find actor in actor namelist
-	cout << "Searching for " << actor << " in namelist\n";
+	cout << "Searching for \e[0;32m" << actor << "\e[0m in namelist\n";
 	
 	int actor_id = -1;
 	
@@ -113,9 +115,10 @@ void search(bool first) {
 	//  actor_id is by default -1, so if it is still -1, we have not found \
 		the actor, so we exit this run of the method
 	if(actor_id+1)
-		cout << "\nFound " << actor << " at index " << actor_id << '\n';
+		cout << "\nFound \e[0;32m" << actor << "\e[0m at index " << actor_id
+		<< '\n';
 	else{
-		cout << "\nCouldn't find " << actor << " in namelist\n\n";
+		cout << "\nCouldn't find \e[0;32m" << actor << "\e[0m in namelist\n\n";
 		search(0);
 		// avoid complications
 		return;
@@ -204,7 +207,8 @@ void search(bool first) {
 		
 		// update depth
 		if(iter%13==0){
-			cout << "\rDepth " << front.depth << " (" << iter << " iterations)";
+			cout << "\r\e[0;34mDepth " << front.depth << " (" << iter
+			<< " iterations)\e[0m";
 			fflush(stdout);
 		}
 		
@@ -212,15 +216,15 @@ void search(bool first) {
 	}
 	
 	if(!found_kevin_bacon){
-		cout << "\nCouldn't find a path from " << actor
-			 << " to " << target_actor << ".\n\n";
+		cout << "\n\e[0;31mCouldn't find a path from \e[0;32m" << actor
+			 << "\e[0;31m to \e[0;36m" << target_actor << "\e[0;31m.\e[0m\n\n";
 		
 		// rerun program
 		search(0);
 		return;
 	}
 	
-	cout << "\nFound " << target_actor << "!\n";
+	cout << "\nFound \e[0;36m" << target_actor << "\e[0m!\n";
 	
 	// because we need to backtrace, we use a stack
 	stack<traverse_node> path;
@@ -233,12 +237,12 @@ void search(bool first) {
 		front = search_queue[front.from];
 	}
 	
-	if(depth < -2) cout << "An error might have occured.\n";
+	if(depth < -2) cout << "\e[0;31mAn error might have occured.\e[0m\n";
 	
 	// print out the path
 	cout << "Path:\n";
 	
-	cout << actor;
+	cout << "\e[0;32m" << actor << "\e[0m";
 	
 	// print everything inside stack
 	while(!path.empty()){
@@ -247,10 +251,11 @@ void search(bool first) {
 		
 		if(node.is_act){
 			// get name from namelist and print
-			cout << an[node.id];
+			if(node.id == kb_loc) cout << "\e[0;36m";
+			cout << an[node.id] << "\e[0m";
 			if(node.id == kb_loc) break;
 		}else{
-			cout << " --- (" << vn[node.id] <<  ") --> ";
+			cout << "\e[0;34m --- (" << vn[node.id] <<  ") --> \e[0m";
 		}
 	}
 	
@@ -363,7 +368,7 @@ int main(int argc, char *argv[]) {
 			update_target_actor = 0;
 			target_actor.clear();
 			target_actor += argv[i];
-			cout << "Using target actor " << target_actor << '\n';
+			cout << "Using target actor \e[0;36m" << target_actor << "\e[0m\n";
 			continue;
 		}
 		if(arg == "--target") update_target_actor = 1;
@@ -371,23 +376,25 @@ int main(int argc, char *argv[]) {
 
 	// check if Kevin Bacon is at position we thought
 	if(act_namelist[kb_loc]!=target_actor){
-		cout << target_actor << " is not at index " << kb_loc << ", updating\n";
+		cout << "\e[0;36m" << target_actor << "\e[0m is not at index " << kb_loc
+			<< ", updating\n";
 		kb_loc = -1;
 		for(;kb_loc<name_len;kb_loc++){
 			if(act_namelist[kb_loc]==target_actor){
-				cout << "Found " << target_actor << " at index " << kb_loc << "!\n";
+				cout << "Found \e[0;36m" << target_actor << "\e[0m at index "
+				<< kb_loc << "!\n";
 				break;
 			}
 		}
 		if(kb_loc+1)
 			cout << "Updating index...\n";
 		else{
-			cout << "Couldn't find proper index, defaulting to 101\n";
+			cout << "\e[0;31mCouldn't find target, defaulting to 101\e[0m\n";
 			kb_loc = 101;
 		}
 	}
 	
-	cout << "Ready\n";
+	cout << "\e[0;32mReady\e[0m\n";
 	
 	// this is the first iteration so we run with first = true
 	search(1);
