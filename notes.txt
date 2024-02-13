@@ -595,3 +595,21 @@ e   c
 	heuristic search is informed search technique that does not necessarily
 	find the optimal path, but finds a reasonably good path - finds earliest
 	path rather than fastest
+
+--- 13/2/24 ---
+
+another type of uninformed search: uniform cost search
+
+== a* ==
+
+heuristic approach to best path problem
+	finds estimate to cost of taking a given path
+
+for this algorithm to work, the heuristic needs to be less than or equal to
+the actual cost
+
+algorithm computes an "a* score", representing the cost of current path +
+heuristic of ending node
+
+essentially, traversal is similar to uniform cost, however, prioritize on a* score
+rather than total path score
