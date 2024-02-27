@@ -114,4 +114,17 @@ secondOrder = [
 	"zoology"
 ]
 
+avgFirstOrder, avgSecondOrder = 0, 0
 
+for word in firstOrder:
+	avgFirstOrder += similarity(rootWord, word)
+
+avgFirstOrder /= len(firstOrder)
+
+for word in secondOrder:
+	avgSecondOrder += similarity(rootWord, word)
+
+avgSecondOrder /= len(secondOrder)
+
+print("Average similarity between words of first order:", avgFirstOrder)
+print("Average similarity between words of second order:", avgSecondOrder)
