@@ -1,3 +1,29 @@
 cohere - similar to llama, but on the cloud
 
+	Cohere has some APIs that accomplish exactly
+	what we are hoping to achieve:
+
+	 - classify API
+		Cohere provides an API in which we can
+		create categories, provide examples for them,
+		and then find which category a phrase best
+		fits into. This would work very well for us.
+	 - tokenize API
+	 	This tokenizes and embeds different phrases
+		relative to one another - it is much more
+		powerful but also harder to use, and it isn't
+		clear if we need it.
+
+	The classify API could work very well if we sample
+	a bunch of random pages at distance 1, 2, 3, 4, etc.
+	away from the goal page, and then use this to classify
+	whatever next pages we encounter.
+
+	However, API limits could be a concern. We need to watch
+	out for this and somehow process in batches.
+
 llama - local and takes up a lot of space
+
+	This takes up WAY too much space, even on
+	my PC at home. Cohere works fine enough for
+	what we are doing.
