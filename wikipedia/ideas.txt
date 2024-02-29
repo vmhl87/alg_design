@@ -20,7 +20,11 @@ cohere - similar to llama, but on the cloud
 	whatever next pages we encounter.
 
 	However, API limits could be a concern. We need to watch
-	out for this and somehow process in batches.
+	out for this and somehow process in batches. Additionally,
+	because calls are sent out over the internet, they will
+	take a rather large amount of time to complete. We won't
+	be able to call the classification API for every single
+	new page found.
 
 llama - local and takes up a lot of space
 

@@ -1,3 +1,4 @@
+import time
 import cohere
 from cohere.responses.classify import Example
 co = cohere.Client('shoQXKOIsvHPwYo86Qfp8zIja2pJ3sCJk9YLwePB')
@@ -131,12 +132,18 @@ inputs=[
     "hunting",
 ]
 
+start = time.time()
+
 response = co.classify(
   inputs=inputs,
   examples=examples,
 )
 
+end = time.time()
+
 output = response.classifications
 
 for i in output:
     print("The prediction for " + i.input + " is " + i.predictions[0])
+
+print("API call took " + str((end-start)*1000) + "ms")
