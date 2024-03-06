@@ -1,25 +1,14 @@
 import random
-import cohere
 from cohere.responses.classify import Example
+from cohere_client import get_client
 
+co = get_client()
 
-# drop-in for proper API key handling
-def unscramble(x):
-    return ''.join([chr(int(i)) for i in x.split()])
-
-API_KEY = open('key.txt', 'r').read()
-API_KEY = unscramble(API_KEY)
-
-
-co = cohere.Client(API_KEY)
-
-
-# graph routing stub - replace with proper code to
-# traverse wikipedia and find adjacencies
-from graph_route_stub import adj
+# use wikipedia API
+from wikipedia_routing import adj
 
 class PageDistance:
-    def __init__(self, root, depth=5, order_size=7):
+    def __init__(self, root, depth=6, order_size=30):
         self.root = root
         self.order_size = order_size
         
@@ -58,6 +47,9 @@ class PageDistance:
                 # we don't want to loop back on ourselves
                 # while collecting orders
                 is_new_page = True
+
+                if neighbor in new_pages:
+                    is_new_page = False
                 
                 for order in self.orders:
                     for other_page in order:
