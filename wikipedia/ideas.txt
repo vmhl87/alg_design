@@ -1,4 +1,5 @@
-work on using wikipedia API to classify pages, and combine this
-with LLM heuristic
-
-also look into word2vec as a possible substitute for cohere
+built an extremely simple classifier with the cohere API,
+will use the categories in Wikipedia to get more accurate results.
+Then combine this with a semantic similarity model to do pinpoint
+searching. End goal: create a class that can hold a selection of
+links and continually select the best. Will integrate into graph.

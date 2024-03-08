@@ -48,4 +48,5 @@ def project_searchspace(pages):
             examples=processed_sectors
         )
 
-    return response
+    for item in response:
+        print(item.input + " is classified as " + str(item.predictions))
