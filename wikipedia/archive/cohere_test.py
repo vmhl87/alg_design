@@ -1,7 +1,8 @@
 import time
-import cohere
 from cohere.responses.classify import Example
-co = cohere.Client('shoQXKOIsvHPwYo86Qfp8zIja2pJ3sCJk9YLwePB')
+from cohere_client import get_client
+
+co = get_client()
 
 rootWord = "polar bear"
 

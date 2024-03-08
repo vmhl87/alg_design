@@ -1,5 +1,3 @@
-# old approach - uses cohere
-"""
 from cohere.responses.classify import Example
 from cohere_client import get_client
 
@@ -33,4 +31,21 @@ sectors = [
                 'painting',
                 'drawing',
                 'color',
-"""
+                'sketch'
+            ]
+        }
+    ]
+
+processed_sectors = []
+
+for sector in sectors:
+    for example in sector['examples']:
+        processed_sectors.append(Example(example, sector['name']))
+
+def project_searchspace(pages):
+    response = co.classify(
+            inputs=pages,
+            examples=processed_sectors
+        )
+
+    return response
