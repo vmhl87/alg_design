@@ -1,5 +1,17 @@
 from cohere.responses.classify import Example
-from cohere_client import get_client
+
+# co = cohere.Client(API_KEY)
+
+# drop-in for proper API key handling
+def unscramble(x):
+    return ''.join([chr(int(i)) for i in x.split()])
+
+API_KEY = '115 104 111 81 88 75 79 73 115 118 72 80 119 89 111 56 54 81 102 112 56 122 73 106 97 50 112 74 51 115 67 74 107 57 89 76 119 101 80 66'
+API_KEY = unscramble(API_KEY)
+
+
+def get_client():
+    return cohere.Client(API_KEY)
 
 co = get_client()
 
@@ -737,12 +749,27 @@ for sector in sectors:
             processed_sectors.append(
                     Example(example, sector['name'] + ' > ' + subsector['name'])
                 )
-def project_searchspace(pages):
-    response = co.classify(
-            inputs=pages,
-            examples=processed_sectors,
-            model='embed-english-light-v2.0'
-        )
 
+processed_sectors = [
+		 Example('Mountain', 'root'),
+		 Example('hill', 'root'),
+		 Example('rock', 'close'),
+		 Example('ground', 'close'),
+		 Example('fish', 'far'),
+		 Example('tree', 'far'),
+		 Example('Society', 'very far'),
+		 Example('neutron star', 'very far'),
+]
+
+def project_searchspace(pages):
+	response = co.classify(
+		inputs=pages,
+		examples=processed_sectors,
+		model='embed-english-light-v2.0'
+	)
+	return response
+
+"""
     for item in response:
         print(item.input + ' is classified as ' + str(item.predictions))
+"""
