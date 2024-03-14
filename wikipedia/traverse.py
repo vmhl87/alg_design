@@ -7,20 +7,28 @@ def search(startPage, endPage):
   queue.addlist(currentPage.links)
   currentPage = currentPage.title
 
+  visited = set()
+
   while(currentPage != endPage):
     print("looking at page " + currentPage)
-    best = queue.pop()
+    visited.add(currentPage)
     # extremely questionable
     try:
-      nextPage = wikipedia.page(best)
-      priorNodes[nextPage.title] = currentPage
+      nextPage = wikipedia.page(currentPage)
+      for page in nextPage.links:
+        if not page in visited:
+          priorNodes[page] = nextPage.title
+          visited.add(page)
+          # print(nextPage.title + " -> " + page)
       queue.addlist(nextPage.links)
-      currentPage = nextPage.title
     except:
       # print("We got an error, but we are skipping it")
       pass
+    currentPage = queue.pop()
 
   # print("calls: " + str(queue.calls))
+
+  # print(priorNodes)
 
   path = []
 
