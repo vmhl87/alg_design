@@ -1,4 +1,3 @@
-
 --- 7/9/23 ---
 
 == sorting algs ==
@@ -72,7 +71,7 @@ sum: n-> if n<0 ret 0; ret n+sum(n-1);
 stack space of O(n), time of O(n)
 
 ex2 | pair_sum_seq: n-> sum=0; for i 0->n: sum+=pair_sum(i,i+1); ret sum;
-      pair_sum: a,b-> ret a+b;
+	  pair_sum: a,b-> ret a+b;
 
 time: O(n), stack: O(1)
 
@@ -167,8 +166,8 @@ iterating over ll:
 
 doubly-linked lists: each node stores *next, *previous
 	*head -> first node <-> second <-> etc. <-> last -> nil
-                     v
-                    nil
+					 v
+					nil
 ops:
 	build:
 		node *current;
@@ -322,15 +321,15 @@ def: list of nodes and edges btw them
 
 simple path:
 0---1
-     \
-      2---3
+	 \
+	  2---3
 
 non-simple path:
 0---1   7----8
-     \ /
+	 \ /
   5--2,6
    \   \
-    4---3
+	4---3
 
 --- 8/1/24 ---
 
@@ -342,19 +341,19 @@ simple cycle: no repeated v. except first,last
 
 tree:
    4 5 6
-    \|/
-     3    8
-     |   /
-     2--7--9
-    /
+	\|/
+	 3    8
+	 |   /
+	 2--7--9
+	/
 0--1
-    \      12
-     \     /
-     10--11--13
-      |
-     14
-     / \
-    15 16
+	\      12
+	 \     /
+	 10--11--13
+	  |
+	 14
+	 / \
+	15 16
 
 --- 10/1/24 ---
 
@@ -377,19 +376,19 @@ implement with a form of adjacency matrix; links nodes to one another
 theoretically implemented with a 2d bool arr
 
 ex: graph
-          b
-         /
-        a
-       /
-    d-s
+		  b
+		 /
+		a
+	   /
+	d-s
    /  |
   e---c
  /|   |
 g |   |
  \|   |
   k---f
-       \
-        j
+	   \
+		j
 
   a b c d e f g j k s
 a   1               1
@@ -432,7 +431,7 @@ a   c---e
  \ / \  |
   s   f |
    \ /  |
-    g---h
+	g---h
 
 push items on stack and mark as visited
 recursively either push next unvisited node onto stack or if impossible backtrack
@@ -452,7 +451,7 @@ BFS for weighted graphs - requires priority queue (?) or other implementation of
 
 graph:
 
-    b---3---e
+	b---3---e
    /|\     / \
   2 | 1   4   9
  /  |  \ /     \
@@ -460,7 +459,7 @@ a   6   d       g
  \  |          /
   5 |         7
    \|        /
-    c---8---f
+	c---8---f
 
 start from a, search for unexplored points, they become candidates for next move
 
@@ -511,7 +510,7 @@ g -> 14
 
 practice:
 
-    b--9->d
+	b--9->d
    >|     ^\
   7 |     | 1
  /  |     |  v
@@ -519,7 +518,7 @@ a   2     4   f
  \  |     |  ^
  12 |     | 5
    >v     |/
-    c-10->e
+	c-10->e
 
 x a 0
 a b 7
@@ -613,3 +612,50 @@ heuristic of ending node
 
 essentially, traversal is similar to uniform cost, however, prioritize on a* score
 rather than total path score
+
+--- 1/4/24 ---
+
+== priority queues ==
+
+many applications require the use of a pq - a way to process items with keys in order
+	not necessarily in full sorted order (?)
+	not necessarily all at once
+
+brief:
+	push(item) -> [nil]
+		add item to queue
+
+	pop() -> [nil]
+		remove highest item from queue
+	
+	top() -> [item]
+		return item with highest key
+
+ex. a cellphone running multiple tasks will prioritize a phone call over the news app
+
+java-style pseudo-impl: (haskell type sig)
+
+MaxPQ()           -> empty priority queue
+MaxPQ(int max)    -> create pq with capacity `max`
+MaxPQ(Key[] a)    -> pq from keys in a :: [Key]
+insert(Key v)     -> insert a key
+max() :: Key      -> return maximum
+delMax()          -> pop maximum out of queue
+isEMpty() :: Bool -> check if empty
+size() :: Int     -> return size of queue
+
+organization : insert   : remove
+ordered      : O(n)     : O(1)
+unordered    : O(1)     : O(n)
+heap         : O(log n) : O(log n)
+
+== heaps ==
+
+binary tree-like structure that encapsulates a "pile of items"
+
+stored in an array such that each key is guaranteed to be larger than or equal to the ones
+at two other specific positions, recursively
+
+a binary tree is heap-ordered if satisfies such heap condition
+
+so like a segtree!
