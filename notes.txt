@@ -659,3 +659,27 @@ at two other specific positions, recursively
 a binary tree is heap-ordered if satisfies such heap condition
 
 so like a segtree!
+
+--- 3/4/24 ---
+
+if we use an unordered array,we get selection sort!
+alternatively, we get insertion sort when using an insertion sort
+
+heap:
+	_prop :: Int -> Nil
+		re-heapify from integer node
+	
+	size :: Nil -> Int
+		return size of heap
+	
+	empty :: Nil -> Bool
+		return heap is empty
+	
+	push :: Item -> Nil
+		append Item to end of heap, and re-heapify
+	
+	top :: Nil -> Item
+		return top of heap
+	
+	pop :: Nil -> Nil
+		remove top of heap, and re-heapify
