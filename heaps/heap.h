@@ -13,8 +13,7 @@ struct heap{
 		while(i>1){
 			if(tree[i]<tree[i>>1]){
 				T t=tree[i>>1];
-				tree[i>>1]=tree[i];
-				tree[i]=t;
+				tree[i>>1]=tree[i];tree[i]=t;
 				i>>=1;
 			}else break;
 		}
@@ -32,21 +31,13 @@ struct heap{
 		while((i<<1)<s){
 			if((i<<1|1)<s){
 				if(tree[i<<1]<tree[i<<1|1]){
-					tree[i]=tree[i<<1];
-					i<<=1;
+					tree[i]=tree[i<<1];i<<=1;
 				}else{
-					tree[i]=tree[i<<1|1];
-					i=i<<1|1;
+					tree[i]=tree[i<<1|1];i=i<<1|1;
 				}
-			}else{
-				tree[i]=tree[i<<1];
-				i<<=1;
-			}
+			}else{tree[i]=tree[i<<1];i<<=1;}
 		}
-		if(i!=s-1){
-			tree[i]=tree[s-1];
-			prop(i);
-		}
+		if(i!=s-1){tree[i]=tree[s-1];prop(i);}
 		tree.pop_back();
 	}
 };
