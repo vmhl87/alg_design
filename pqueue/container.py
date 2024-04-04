@@ -102,7 +102,7 @@ class Container:
             hi = 2*int(math.log2(len(self._items) - 1))
             hw -= spc
         he -= hi
-        if hw < 0:
+        if hw < 0 or he < 0:
             hw += spc
             he += hi
             cat += '\n' * (he//2 - 1)
