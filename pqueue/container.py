@@ -1,5 +1,6 @@
 import time
 import math
+import os
 
 # Container datastructure that wraps a List and
 # provides all necessary operations for binary
@@ -15,11 +16,13 @@ import math
 class Container:
     # _items initializes with a zero element because
     # the first element of the tree is indexed as 1
-    def __init__(self):
+    def __init__(self, p1, p2):
         self._items = [0]
         # highlighted items
         self._color = [-1, -1]
         self._highlight = "37"
+        self.p1 = p1
+        self.p2 = p2
         self.draw()
 
     # animated wrappers
@@ -28,35 +31,29 @@ class Container:
         self._color[0] = len(self._items) - 1
         self._highlight = "32"
         self.draw()
-        time.sleep(1)
+        time.sleep(self.p1)
         self._color[0] = -1
         self._highlight = "37"
         self.draw()
-        time.sleep(0.3)
+        time.sleep(self.p2)
 
     def pop(self):
-        self._color[0] = len(self._items) - 1
-        self._highlight = "31"
-        self.draw()
-        time.sleep(1)
-        self._color[0] = -1
-        self._highlight = "37"
         self._items.pop()
         self.draw()
-        time.sleep(0.3)
+        time.sleep(self.p2)
 
     def set(self, i, v):
         self._color[0] = i
         self._highlight = "31"
         self.draw()
         self._items[i] = v
-        time.sleep(0.5)
+        time.sleep(self.p1/2)
         self.draw()
-        time.sleep(0.5)
+        time.sleep(self.p1/2)
         self._color[0] = -1
         self._highlight = "37"
         self.draw()
-        time.sleep(0.3)
+        time.sleep(self.p2)
 
     def get(self, i): return self._items[i]
     def size(self): return len(self._items)
@@ -69,11 +66,11 @@ class Container:
         self._color = [a, b]
         self._highlight = "33"
         self.draw()
-        time.sleep(1)
+        time.sleep(self.p1)
         self._color = [-1, -1]
         self._highlight = "37"
         self.draw()
-        time.sleep(0.3)
+        time.sleep(self.p2)
         return self._items[a] < self._items[b]
 
     # animated swap
@@ -84,33 +81,66 @@ class Container:
         t = self._items[a]
         self._items[a] = self._items[b]
         self._items[b] = t
-        time.sleep(0.5)
+        time.sleep(self.p1/2)
         self.draw()
-        time.sleep(0.5)
+        time.sleep(self.p1/2)
         self._color = [-1, -1]
         self._highlight = "37"
         self.draw()
-        time.sleep(0.3)
+        time.sleep(self.p2)
 
     # pretty print tree
     def draw(self):
         cat = ""
         nxt = 2
         spc = 1
+        hi = 1
+        he = os.get_terminal_size()[1] - 1
+        hw = os.get_terminal_size()[0] // 2
         if len(self._items) > 1:
-            spc = int(math.pow(2, int(math.log2(len(self._items)-1))))
-        for _ in range(1, spc):
-            cat += ' '
+            spc = int(math.pow(2, 1+int(math.log2(len(self._items)-1))))
+            hi = 2*int(math.log2(len(self._items) - 1))
+            hw -= spc
+        he -= hi
+        if hw < 0:
+            hw += spc
+            he += hi
+            cat += '\n' * (he//2 - 1)
+            s = "Your terminal is too small!"
+            cat += ' ' * ((os.get_terminal_size()[0] - len(s)) // 2)
+            cat += s + '\n'
+            s = "Current: " + str(os.get_terminal_size()[0]) + " x "
+            s += str(os.get_terminal_size()[1])
+            cat += ' ' * ((os.get_terminal_size()[0] - len(s)) // 2)
+            cat += s + '\n'
+            s = "Needs: " + str(spc + spc + 1) + " x " + str(hi)
+            cat += ' ' * ((os.get_terminal_size()[0] - len(s)) // 2)
+            cat += s + '\n'
+            cat += '\n' * (he - he//2 - 2)
+            print(cat)
+            return
+        cat += '\n' * (he//2)
+        cat += ' ' * (spc+hw-1)
         for i in range(1, len(self._items)):
             if i == nxt:
-                cat += '\n'
                 spc //= 2
-                for _ in range(1, spc):
-                    cat += ' '
                 nxt *= 2
-            if i > nxt // 2:
-                for _ in range(0, spc+spc-1):
+                cat += '\n'
+                cat += ' ' * hw
+                for j in range(i, len(self._items)):
+                    if j == nxt: break
+                    if [j, j//2] == self._color:
+                        cat += "\033[0;" + self._highlight + 'm'
+                    if [j//2, j] == self._color:
+                        cat += "\033[0;" + self._highlight + 'm'
+                    cat += (' ' if j%2 == 0 else '-') * (spc-1)
                     cat += ' '
+                    cat += ('-' if j%2 == 0 else ' ') * (spc-1)
+                    cat += " \033[0m"
+                cat += '\n'
+                cat += ' ' * (spc+hw-1)
+            if i > nxt // 2:
+                cat += ' ' * (spc+spc-1)
             cat += "\033[0;"
             if i in self._color:
                 cat += self._highlight
@@ -119,4 +149,5 @@ class Container:
             cat += 'm'
             cat += str(self._items[i])
             cat += "\033[0m"
+        cat += '\n' * (he - he//2)
         print(cat)

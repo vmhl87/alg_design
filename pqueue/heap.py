@@ -10,8 +10,8 @@ from container import Container
 #   pop(): remove top item and reheapify
 #   top(): return top item
 class Heap:
-    def __init__(self):
-        self._tree = Container()
+    def __init__(self, p1=1, p2=0.3):
+        self._tree = Container(p1, p2)
 
     # utilities
     def empty(self): return self._tree.size() == 1
@@ -44,7 +44,7 @@ class Heap:
         if self._tree.size() == 1: return
         # we set the root to 0 to make it clearer in
         # the visualization that we are deleting
-        self._tree.set(1, 0)
+        self._tree.set(1, "\033[0;31m_\033[0m")
         # the location of the hole, i, starts at 1
         i = 1
         # continually pick the smaller child of the hole
@@ -60,5 +60,7 @@ class Heap:
         # up contiguity, so if necessary we swap end with hole
         if i != self._tree.size() - 1:
             self._tree.swap(i, self._tree.size() - 1)
+            self._tree.pop()
             self._prop(i)
-        self._tree.pop()
+        else:
+            self._tree.pop()
