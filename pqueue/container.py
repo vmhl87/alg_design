@@ -1,4 +1,5 @@
 import time
+import math
 
 # Container datastructure that wraps a List and
 # provides all necessary operations for binary
@@ -18,7 +19,7 @@ class Container:
         self._items = [0]
         # highlighted items
         self._color = [-1, -1]
-        self._highlight = "32"
+        self._highlight = "37"
         self.draw()
 
     # animated wrappers
@@ -29,6 +30,7 @@ class Container:
         self.draw()
         time.sleep(1)
         self._color[0] = -1
+        self._highlight = "37"
         self.draw()
         time.sleep(0.3)
 
@@ -38,19 +40,21 @@ class Container:
         self.draw()
         time.sleep(1)
         self._color[0] = -1
+        self._highlight = "37"
         self._items.pop()
         self.draw()
         time.sleep(0.3)
 
     def set(self, i, v):
         self._color[0] = i
-        self._highlight = "33"
+        self._highlight = "31"
         self.draw()
         self._items[i] = v
         time.sleep(0.5)
         self.draw()
         time.sleep(0.5)
         self._color[0] = -1
+        self._highlight = "37"
         self.draw()
         time.sleep(0.3)
 
@@ -67,6 +71,7 @@ class Container:
         self.draw()
         time.sleep(1)
         self._color = [-1, -1]
+        self._highlight = "37"
         self.draw()
         time.sleep(0.3)
         return self._items[a] < self._items[b]
@@ -74,7 +79,7 @@ class Container:
     # animated swap
     def swap(self, a, b):
         self._color = [a, b]
-        self._highlight = "32"
+        self._highlight = "36"
         self.draw()
         t = self._items[a]
         self._items[a] = self._items[b]
@@ -83,9 +88,35 @@ class Container:
         self.draw()
         time.sleep(0.5)
         self._color = [-1, -1]
+        self._highlight = "37"
         self.draw()
         time.sleep(0.3)
 
     # pretty print tree
     def draw(self):
-        print("\033[0;" + self._highlight + "mhello world\033[0m")
+        cat = ""
+        nxt = 2
+        spc = 1
+        if len(self._items) > 1:
+            spc = int(math.pow(2, int(math.log2(len(self._items)-1))))
+        for _ in range(1, spc):
+            cat += ' '
+        for i in range(1, len(self._items)):
+            if i == nxt:
+                cat += '\n'
+                spc //= 2
+                for _ in range(1, spc):
+                    cat += ' '
+                nxt *= 2
+            if i > nxt // 2:
+                for _ in range(0, spc+spc-1):
+                    cat += ' '
+            cat += "\033[0;"
+            if i in self._color:
+                cat += self._highlight
+            else:
+                cat += "37"
+            cat += 'm'
+            cat += str(self._items[i])
+            cat += "\033[0m"
+        print(cat)
