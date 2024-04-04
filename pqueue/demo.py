@@ -7,10 +7,11 @@ p1 = 1
 p2 = 0.3
 
 if len(sys.argv) > 1:
-    if sys.argv[1] in ["help", "h", "--help", "-h"]:
+    try:
+        n = int(sys.argv[1])
+    except:
         print("demo.py <nodes> <step> <pause>")
         exit()
-    n = int(sys.argv[1])
 if len(sys.argv) > 2: p1 = float(sys.argv[2])
 if len(sys.argv) > 3: p2 = float(sys.argv[3])
 

@@ -96,7 +96,7 @@ class Container:
         spc = 1
         hi = 1
         he = os.get_terminal_size()[1] - 1
-        hw = os.get_terminal_size()[0] // 2
+        hw = os.get_terminal_size()[0] // 2 + 1
         if len(self._items) > 1:
             spc = int(math.pow(2, 1+int(math.log2(len(self._items)-1))))
             hi = 2*int(math.log2(len(self._items) - 1))
@@ -105,21 +105,21 @@ class Container:
         if hw < 0 or he < 0:
             hw += spc
             he += hi
-            cat += '\n' * (he//2 - 1)
+            cat += '\n' * (he//2 - 2)
             s = "Your terminal is too small!"
+            cat += ' ' * ((os.get_terminal_size()[0] - len(s)) // 2)
+            cat += s + '\n'
+            s = "Required: " + str(spc + spc + 1) + " x " + str(hi)
             cat += ' ' * ((os.get_terminal_size()[0] - len(s)) // 2)
             cat += s + '\n'
             s = "Current: " + str(os.get_terminal_size()[0]) + " x "
             s += str(os.get_terminal_size()[1])
             cat += ' ' * ((os.get_terminal_size()[0] - len(s)) // 2)
             cat += s + '\n'
-            s = "Needs: " + str(spc + spc + 1) + " x " + str(hi)
-            cat += ' ' * ((os.get_terminal_size()[0] - len(s)) // 2)
-            cat += s + '\n'
             cat += '\n' * (he - he//2 - 2)
             print(cat)
             return
-        cat += '\n' * (he//2)
+        cat += '\n' * (he - he//2)
         cat += ' ' * (spc+hw-1)
         for i in range(1, len(self._items)):
             if i == nxt:
@@ -149,5 +149,5 @@ class Container:
             cat += 'm'
             cat += str(self._items[i])
             cat += "\033[0m"
-        cat += '\n' * (he - he//2)
+        cat += '\n' * (he//2)
         print(cat)
