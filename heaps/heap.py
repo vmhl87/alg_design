@@ -48,7 +48,7 @@ class Heap:
             else:
                 self._tree[i] = self._tree[i*2]
                 i *= 2
-        # if mantain contiguity by swapping end of heap with hole
+        # mantain contiguity by swapping end of heap with hole
         if i != len(self._tree) - 1:
             self._tree[i] = self._tree[len(self._tree) - 1]
             self._prop(i)
