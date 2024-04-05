@@ -1,15 +1,17 @@
 # import necessary components
+# - PauseTime necessary to interact with rendering
 # - Heap necessary for heapsort
 # - random necessary for random input
 # - sys necessary for command line args
+from container import PauseTime
 from heap import Heap
 import random
 import sys
 
 # default values - 15 nodes, 0.8 second move, 0.2 second pause
 nodes = 15
-move_time = 0.8
-pause_time = 0.2
+move_time = 1.5
+pause_time = 0.3
 
 # read system arguments and parse
 if len(sys.argv) > 1:
@@ -23,15 +25,17 @@ if len(sys.argv) > 1:
 if len(sys.argv) > 2: move_time = float(sys.argv[2])
 if len(sys.argv) > 3: pause_time = float(sys.argv[3])
 
+PauseTime(move_time, pause_time)
+
 # because Container() works best with single-char printable inputs,
 # we mod to the digits 1-9
-values = [1+(i%9) for i in range(0, nodes)]
+values = [1+i for i in range(0, nodes)]
 
 # rearrange
 random.shuffle(values)
 
-# initialize heap - unfortunately Container() is not truly abstracted
-priority_queue = Heap(move_time, pause_time)
+#initialize heap
+priority_queue = Heap()
 
 # fill heap - this is animated
 for i in values:

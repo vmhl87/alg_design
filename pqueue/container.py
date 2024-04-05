@@ -6,6 +6,32 @@ import time
 import math
 import os
 
+# utility to process length of strings that possibly
+# contain ANSI escape characters
+def xlen(s):
+    in_ansi = False
+    ret = 0
+    for i in s:
+        if i == '\033': in_ansi = True
+        elif in_ansi:
+            if i == 'm': in_ansi = False
+        else: ret += 1
+    return ret
+
+# globalized pause time
+p1 = 1.5
+p2 = 0.3
+def PauseTime(o1, o2):
+    global p1, p2
+    p1 = o1
+    p2 = o2
+
+# globalized status
+status = ""
+def Status(s):
+    global status
+    status = s
+
 # Container datastructure that wraps a List and
 # provides all necessary operations for binary
 # heap to function, while adding a visual display.
@@ -20,15 +46,12 @@ import os
 class Container:
     # _items initializes with a zero element because
     # the first element of the tree is indexed as 1
-    def __init__(self, p1, p2):
+    def __init__(self):
         self._items = [0]
         # highlighted items
         self._color = [-1, -1]
         # ANSI highlight color
         self._highlight = "37"
-        # pause amounts
-        self.p1 = p1
-        self.p2 = p2
         # first draw
         self.draw()
 
@@ -40,18 +63,18 @@ class Container:
         self._highlight = "32"
         # draw and wait
         self.draw()
-        time.sleep(self.p1)
+        time.sleep(p1)
         # reset color and redraw
         self._color[0] = -1
         self.draw()
         # wait again (for next instruction)
-        time.sleep(self.p2)
+        time.sleep(p2)
 
     # no animation
     def pop(self):
         self._items.pop()
         self.draw()
-        time.sleep(self.p2)
+        time.sleep(p2)
 
     # the only time set() gets called is when marking the
     # rooot node for deletion - we automatically color red
@@ -62,13 +85,13 @@ class Container:
         self.draw()
         # render half-frame to show change
         self._items[i] = v
-        time.sleep(self.p1/2)
+        time.sleep(p1/2)
         self.draw()
-        time.sleep(self.p1/2)
+        time.sleep(p1/2)
         # reset color and redraw
         self._color[0] = -1
         self.draw()
-        time.sleep(self.p2)
+        time.sleep(p2)
 
     # utilities
     def get(self, i): return self._items[i]
@@ -84,10 +107,10 @@ class Container:
         self._highlight = "33"
         self.draw()
         # pause and reset highlights and redraw
-        time.sleep(self.p1)
+        time.sleep(p1)
         self._color = [-1, -1]
         self.draw()
-        time.sleep(self.p2)
+        time.sleep(p2)
         # return result of comparison
         return self._items[a] < self._items[b]
 
@@ -102,14 +125,14 @@ class Container:
         self._items[a] = self._items[b]
         self._items[b] = t
         # render half-frame to animate transition
-        # while still taking only `self.p1` seconds
-        time.sleep(self.p1/2)
+        # while still taking only `p1` seconds
+        time.sleep(p1/2)
         self.draw()
-        time.sleep(self.p1/2)
+        time.sleep(p1/2)
         # reset highlights and redraw
         self._color = [-1, -1]
         self.draw()
-        time.sleep(self.p2)
+        time.sleep(p2)
 
     # pretty print tree - this method does the vast majority of the work!
     def draw(self):
@@ -140,7 +163,8 @@ class Container:
             s = "Your terminal is too small!"
             out_str += ' ' * ((os.get_terminal_size()[0] - len(s)) // 2)
             out_str += s + '\n'
-            s = "Required: " + str(spacing + spacing + 1) + " x " + str(tree_height)
+            s = "Required: " + str(spacing + spacing + 1) + " x "
+            s += str(tree_height)
             out_str += ' ' * ((os.get_terminal_size()[0] - len(s)) // 2)
             out_str += s + '\n'
             s = "Current: " + str(os.get_terminal_size()[0]) + " x "
@@ -170,39 +194,47 @@ class Container:
                 out_str += ' ' * window_width
                 # loop over elemnts of this layer
                 for j in range(i, len(self._items)):
-                    # of course we don't want to process elements that are outside
+                    # of course we don't want to process elements outside
                     # of this layer; that would be unnecessary
                     if j == next_layer: break
-                    # if both endpoints of the edge are colored, color the edge too.
+                    # if both endpoints of the edge are colored, color edge too
                     # The math works out really nicely here!
                     if [j, j//2] == self._color or [j//2, j] == self._color:
                         out_str += "\033[0;" + self._highlight + 'm'
                     # not all gaps between indices have dashes - only even -> odd
-                    # we only draw dashes on the correct side, and spaces on the other
+                    # we only draw dashes on correct side, and spaces on other
                     out_str += (' ' if j%2 == 0 else '-') * (spacing-1)
                     out_str += ' '
                     out_str += ('-' if j%2 == 0 else ' ') * (spacing-1)
                     # correct for possible coloration
                     out_str += " \033[0m"
-                while len(out_str) and out_str[-1] in [' ', '\033', '[', '0', 'm']:
+                while len(out_str) and out_str[-1] != '-':
                     out_str = out_str[:-1]
                 # newline and left margin
                 out_str += '\n'
                 out_str += ' ' * window_width
             # print out actual nodes
-            out_str += ' ' * (spacing-1)
+            out_str += ' ' * (spacing-2)
             out_str += "\033[0;"
             if i in self._color:
                 out_str += self._highlight
             else:
                 out_str += "37"
             out_str += 'm'
-            out_str += str(self._items[i])
+            # process non-single-char items
+            r = str(self._items[i])
+            if xlen(r) < 3: r = ' ' + r
+            if xlen(r) < 3: r += ' '
+            out_str += r
             out_str += "\033[0m"
-            out_str += ' ' * spacing
+            out_str += ' ' * (spacing-1)
         while len(out_str) and out_str[-1] == ' ':
             out_str = out_str[:-1]
         # lower margin
         out_str += '\n' * (window_height//2)
+        # status string
+        w = os.get_terminal_size()[0]
+        out_str +=  ' ' *  ((w // 2) - (xlen(status) // 2))
+        out_str += status
         # finally print it all out
         print(out_str)
