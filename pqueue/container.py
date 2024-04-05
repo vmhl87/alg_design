@@ -9,14 +9,14 @@ import os
 # Container datastructure that wraps a List and
 # provides all necessary operations for binary
 # heap to function, while adding a visual display.
-#   size(): self explanatory
-#   compare(a, b): find smaller of two items
-#   swap(a, b): swap two items in the list
-#   push(item): append item to end of list
-#   pop(): remove item from end of list
-#   get(i): get item at index i
-#   set(i, v): set item at i with value v
-#   draw(): draw tree  [[internal]]
+# - size(): self explanatory
+# - compare(a, b): find smaller of two items
+# - swap(a, b): swap two items in the list
+# - push(item): append item to end of list
+# - pop(): remove item from end of list
+# - get(i): get item at index i
+# - set(i, v): set item at i with value v
+# - draw(): draw tree  [[internal]]
 class Container:
     # _items initializes with a zero element because
     # the first element of the tree is indexed as 1
@@ -173,9 +173,7 @@ class Container:
                     if j == next_layer: break
                     # if both endpoints of the edge are colored, color the edge too.
                     # The math works out really nicely here!
-                    if [j, j//2] == self._color: # ANSI color codes
-                        out_str += "\033[0;" + self._highlight + 'm'
-                    if [j//2, j] == self._color:
+                    if [j, j//2] == self._color or [j//2, j] == self._color:
                         out_str += "\033[0;" + self._highlight + 'm'
                     # not all gaps between indices have dashes - only even -> odd
                     # we only draw dashes on the correct side, and spaces on the other

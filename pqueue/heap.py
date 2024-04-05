@@ -1,14 +1,15 @@
+# import custom container datastructure
 from container import Container
 
 # Binary Heap datastructure that internally uses a
 # Container class for item storage and access, which
 # can display changes in real time.
 # Methods are kept semi-consistent with c++ STL
-#   empty(), size(): self explanatory
-#   _prop(i): upwards propagation from node i  [[internal]]
-#   push(item): append item to heap and reheapify
-#   pop(): remove top item and reheapify
-#   top(): return top item
+# - empty(), size(): self explanatory
+# - _prop(i): upwards propagation from node i  [[internal]]
+# - push(item): append item to heap and reheapify
+# - pop(): remove top item and reheapify
+# - top(): return top item
 class Heap:
     # unfortunately I did not fully abstract this Heap
     # implementation from the underlying Container because
