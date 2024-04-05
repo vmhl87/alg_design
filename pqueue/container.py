@@ -184,7 +184,7 @@ class Container:
                     out_str += ('-' if j%2 == 0 else ' ') * (spacing-1)
                     # correct for possible coloration
                     out_str += " \033[0m"
-                while len(out_str) and out_str[-1] == ' ':
+                while len(out_str) and out_str[-1] in [' ', '\033[0m']:
                     out_str = out_str[:-1]
                 # newline and left margin
                 out_str += '\n'
