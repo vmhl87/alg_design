@@ -163,6 +163,8 @@ class Container:
                 spacing //= 2
                 # layer indices are always powers of 2 (2, 4, 6, 8, etc)
                 next_layer *= 2
+                while len(out_str) and out_str[-1] == ' ':
+                    out_str = out_str[:-1]
                 # newline and left margin
                 out_str += '\n'
                 out_str += ' ' * window_width
@@ -182,6 +184,8 @@ class Container:
                     out_str += ('-' if j%2 == 0 else ' ') * (spacing-1)
                     # correct for possible coloration
                     out_str += " \033[0m"
+                while len(out_str) and out_str[-1] == ' ':
+                    out_str = out_str[:-1]
                 # newline and left margin
                 out_str += '\n'
                 out_str += ' ' * window_width
@@ -196,6 +200,8 @@ class Container:
             out_str += str(self._items[i])
             out_str += "\033[0m"
             out_str += ' ' * spacing
+        while len(out_str) and out_str[-1] == ' ':
+            out_str = out_str[:-1]
         # lower margin
         out_str += '\n' * (window_height//2)
         # finally print it all out
