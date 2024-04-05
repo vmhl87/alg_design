@@ -1,28 +1,42 @@
+# import necessary components
+# - Heap necessary for heapsort
+# - random necessary for random input
+# - sys necessary for command line args
 from heap import Heap
 import random
 import sys
 
-n = 15
-p1 = 1
-p2 = 0.3
+# default values - 15 nodes, 0.8 second move, 0.2 second pause
+nodes = 15
+move_time = 0.8
+pause_time = 0.2
 
+# read system arguments and parse
 if len(sys.argv) > 1:
+    # assume first argument is node count, if it is not an int,
+    # then print a usage dialog
     try:
-        n = int(sys.argv[1])
+        nodes = int(sys.argv[1])
     except:
-        print("demo.py <nodes> <step> <pause>")
+        print("demo.py <node count> <move time> <pause time>")
         exit()
-if len(sys.argv) > 2: p1 = float(sys.argv[2])
-if len(sys.argv) > 3: p2 = float(sys.argv[3])
+if len(sys.argv) > 2: move_time = float(sys.argv[2])
+if len(sys.argv) > 3: pause_time = float(sys.argv[3])
 
-a = [1+(i%9) for i in range(0, n)]
+# because Container() works best with single-char printable inputs,
+# we mod to the digits 1-9
+values = [1+(i%9) for i in range(0, nodes)]
 
-random.shuffle(a)
+# rearrange
+random.shuffle(values)
 
-h = Heap(p1, p2)
+# initialize heap - unfortunately Container() is not truly abstracted
+priority_queue = Heap(move_time, pause_time)
 
-for i in a:
-    h.push(i)
+# fill heap - this is animated
+for i in values:
+    priority_queue.push(i)
 
-while not h.empty():
-    h.pop()
+# drain heap - this is also animated
+while not priority_queue.empty():
+    priority_queue.pop()

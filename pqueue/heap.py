@@ -5,12 +5,16 @@ from container import Container
 # can display changes in real time.
 # Methods are kept semi-consistent with c++ STL
 #   empty(), size(): self explanatory
-#   _prop(i): upwards propagation from node i
+#   _prop(i): upwards propagation from node i  [[internal]]
 #   push(item): append item to heap and reheapify
 #   pop(): remove top item and reheapify
 #   top(): return top item
 class Heap:
-    def __init__(self, p1=0.8, p2=0.2):
+    # unfortunately I did not fully abstract this Heap
+    # implementation from the underlying Container because
+    # there was no easy way to pass variable pause times
+    # between the different modules
+    def __init__(self, p1, p2):
         self._tree = Container(p1, p2)
 
     # utilities
@@ -42,7 +46,7 @@ class Heap:
     # downwards propagation (SINK) from the root
     def pop(self):
         if self._tree.size() == 1: return
-        # we set the root to 0 to make it clearer in
+        # we set the root to 'x' to make it clearer in
         # the visualization that we are deleting
         self._tree.set(1, "\033[0;31mx\033[0m")
         # the location of the hole, i, starts at 1
