@@ -9,13 +9,17 @@ import os
 # utility to process length of strings that possibly
 # contain ANSI escape characters
 def xlen(s):
+    return len(xstr(s))
+
+# utility to strip ANSI color codes from a string
+def xstr(s):
     in_ansi = False
-    ret = 0
+    ret = ''
     for i in s:
         if i == '\033': in_ansi = True
         elif in_ansi:
             if i == 'm': in_ansi = False
-        else: ret += 1
+        else: ret += i
     return ret
 
 # globalized pause time
@@ -222,7 +226,10 @@ class Container:
                 out_str += "37"
             out_str += 'm'
             # process non-single-char items
-            r = str(self._items[i])
+            if i in self._color:
+                r = xstr(str(self._items[i]))
+            else:
+                r = str(self._items[i])
             if xlen(r) < 3: r = ' ' + r
             if xlen(r) < 3: r += ' '
             out_str += r

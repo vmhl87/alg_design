@@ -43,6 +43,20 @@ class Heap:
         self._tree.push(item)
         self._prop(self._tree.size() - 1)
 
+    # refill tree from list and reheapify
+    def fill(self, items):
+        Status("Clear heap")
+        self._tree = Container()
+        for item in items:
+            Status("Add \033[0;32m" + str(item) + "\033[0m to heap")
+            self._tree.push(item)
+        self.rebalance()
+
+    # reheapify
+    def rebalance(self):
+        for i in range(2, self._tree.size()):
+            self._prop(i)
+
     # essentially just a wrapper
     def top(self):
         if self._tree.size() == 1: return None
