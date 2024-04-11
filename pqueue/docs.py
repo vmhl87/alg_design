@@ -1,4 +1,7 @@
+# Semi-interactive pretty-printed help dialog
+
 def Help(args):
+    # If no additional arguments given, print out summary
     if len(args) == 0:
         print("\033[1m`exit`\033[0m - exit program")
         print("\033[1m`sort`\033[0m - change sorting metric")
@@ -7,6 +10,7 @@ def Help(args):
         print("\033[1m`reset`\033[0m - reset heap state")
         print("\033[1m`help command`\033[0m - additional information about commands")
 
+    # Give additional information for specific commands
     elif args[0] == "exit":
         print("Usage: \033[1m`exit`\033[0m")
         print("  Exits simulation. Provides a confirmation dialog.")

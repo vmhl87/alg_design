@@ -1,3 +1,5 @@
+# Put in own file to avoid clutter. Simply a dictionary of dictionaries.
+
 Stats = {}
 
 Stats["population"] = {

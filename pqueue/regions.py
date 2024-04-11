@@ -1,3 +1,5 @@
+# Very simplistic, put in its own file for organizational purposes
+
 Regions = {}
 
 Regions["Northeast"] = ["ME", "NH", "VT", "MA", "RI", "CT", "NY", "NJ", "PA"]
