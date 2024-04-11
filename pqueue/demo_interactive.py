@@ -13,7 +13,7 @@ flip = False
 class SwitchableInt:
     def __init__(self, i):
         self.i = i
-        self.c = "\033[0;" + rnc() + 'm' + str(self.i) + "\033[0m"
+        self.c = "\033[" + rnc() + 'm' + str(self.i) + "\033[0m"
 
     def __str__(self):
         return self.c
