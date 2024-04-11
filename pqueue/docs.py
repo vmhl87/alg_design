@@ -28,11 +28,13 @@ def Help(args):
         print("  For a list of valid regions, run \033[1m`Add list`\033[0m.")
 
     elif args[0] == "pop":
-        print("Usage: \033[1m`pop`\033[0m")
+        print("Usage: \033[1m`Pop`\033[0m")
+        print("  Can be abbreviated to \033[1m`pop`\033[0m or \033[1m`p`\033[0m.")
         print("  Remove top state from queue, animated.")
 
     elif args[0] == "reset":
-        print("Usage: \033[1m`reset`\033[0m")
+        print("Usage: \033[1m`Reset`\033[0m")
+        print("  Can be abbreviated to \033[1m`reset`\033[0m or \033[1m`r`\033[0m.")
         print("  Reset heap state.")
 
     else:
