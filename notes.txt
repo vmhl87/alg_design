@@ -683,3 +683,27 @@ heap:
 	
 	pop :: Nil -> Nil
 		remove top of heap, and re-heapify
+
+--- 11/4/24 ---
+
+== dynamic programming ==
+
+rod-cutting example:
+	f() :: Length -> Price
+
+with some rod of length x, what is the maximum price that can be
+gained by spliting it into some number of sub-rods?
+
+x  |  f(x)
+1     1
+2     5
+3     8
+4     9
+5     10
+6     17
+7     17
+8     20
+9     24
+10    30
+
+simple to full search; improved by DP acceleration
