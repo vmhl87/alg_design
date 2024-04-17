@@ -20,16 +20,25 @@ def fib_dp_memsave(n):
     return b
 
 # O(log n) by matrix multiplication
+def fib_matrix(n):
+    mat, vec = [[1, 1], [1, 2]], [0, 1]
+    m = n // 2
+    while m:
+        if m%2 == 1:
+            vec = vmul(vec, mat)
+        mat = mmul(mat, mat)
+        m //= 2
+    return vec[n%2]
 
-# multiply vector by matrix
-def vmul(v, m):
+# matrix utilities - assumed 2x2
+
+def vmul(v, m): # vector by matrix
     return [
         m[0][0]*v[0] + m[0][1]*v[1],
         m[1][0]*v[0] + m[1][1]*v[1]
     ]
 
-# multiply matrix by matrix
-def mmul(m1, m2):
+def mmul(m1, m2): # matrix by matrix
     return [
         [
             m1[0][0]*m2[0][0] + m1[0][1]*m2[1][0],
@@ -40,14 +49,3 @@ def mmul(m1, m2):
             m1[1][0]*m2[0][1] + m1[1][1]*m2[1][1]
         ]
     ]
-
-# create transformation matrix and binary exponentiate
-def fib_matrix(n):
-    mat, vec = [[1, 1], [1, 2]], [0, 1]
-    m = n // 2
-    while m:
-        if m%2 == 1:
-            vec = vmul(vec, mat)
-        mat = mmul(mat, mat)
-        m = m // 2
-    return vec[n%2]
