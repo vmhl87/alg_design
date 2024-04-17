@@ -11,6 +11,14 @@ def fib_dp(n):
         dp.append(dp[-1] + dp[i-2])
     return dp[-1]
 
+# bottom-up with memory saving
+def fib_dp_memsave(n):
+    if n == 0: return a
+    a, b = 0, 1
+    for i in range(2, n+1):
+        a, b = b, a+b
+    return b
+
 # O(log n) by matrix multiplication
 
 # multiply vector by matrix
