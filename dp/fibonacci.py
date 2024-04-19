@@ -4,22 +4,38 @@ def fib_recursive(n):
     if n == 1: return 1
     return fib_recursive(n-1) + fib_recursive(n-2)
 
-# bottom-up dp accelerated
-def fib_dp(n):
-    dp = [0, 1]
+# top-down dp solution
+dp = []
+def fib_td(n):
+    global dp
+    if n == 0:
+        return 0
+    if n == 1:
+        return 1
+    # extend length of dp[] when necessary
+    if n >= len(dp):
+        dp += [0 for _ in range(n-len(dp)+1)]
+    if dp[n]:
+        return dp[n]
+    dp[n] = fib_td(n-1) + fib_td(n-2)
+    return dp[n]
+
+# bottom-up dp solution
+def fib_bu(n):
+    dp = [0, 1] + [0 for _ in range(n-1)]
     for i in range(2, n+1):
-        dp.append(dp[-1] + dp[i-2])
-    return dp[-1]
+        dp[i] = dp[i-1] + dp[i-2]
+    return dp[n]
 
 # bottom-up with memory saving
-def fib_dp_memsave(n):
-    if n == 0: return a
+def fib_bu_memsave(n):
+    if n == 0: return 0
     a, b = 0, 1
     for i in range(2, n+1):
         a, b = b, a+b
     return b
 
-# O(log n) by matrix multiplication
+# O(n log n) by matrix multiplication
 def fib_matrix(n):
     mat, vec = [[1, 1], [1, 2]], [0, 1]
     m = n // 2
