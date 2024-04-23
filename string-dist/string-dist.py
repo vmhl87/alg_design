@@ -1,6 +1,8 @@
 # string distance, bottom up dynamic
 
 def string_distance(s1, s2):
+    s1, s2 = '_' + s1, '_' + s2
+
     distances = [[0 for j in range(len(s1))] for i in range(len(s2))]
 
     for j in range(len(s1)):
