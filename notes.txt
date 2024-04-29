@@ -707,3 +707,9 @@ x  |  f(x)
 10    30
 
 simple to full search; improved by DP acceleration
+
+--- 29/4/24 ---
+
+== greedy algs ==
+
+1,7,11 -> vmul [int] -> sum = 21
