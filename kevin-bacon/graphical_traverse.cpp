@@ -46,7 +46,7 @@ node *al, *vl;
 // movie and actor. We instead dynamically locate on the fly given integer ID.
 
 // find integer ID from actor name
-int get_actor(std::string name){
+int get_actor(std::string actor){
 	std::ifstream act_name("actors_name.list");
 	for(int i=0; i<name_len; ++i){
 		std::string s; getline(act_name, s);
