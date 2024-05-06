@@ -141,6 +141,11 @@ int lin(int i){
 // ID of kevin bacon (hardcoded in this version)
 int kb_loc = 101;
 
+// overloads for input that can't be done in pure c
+void center(const char *s){
+	return center(s, W_CHARS/2, H_CHARS/2);
+}
+
 // wrapper for entire search routine
 void search(bool first) {
 	// textbox input and UI to read in actor
@@ -149,13 +154,16 @@ void search(bool first) {
 	attr(NONE);
 	rect((W_CHARS/2-18)*W_CHAR-4, (1+H_CHARS/2)*H_CHAR-4,
 		37*W_CHAR+8, H_CHAR + 8, 0, 0, 0);
-	std::string actor = text_box(W_CHARS/2 - 17, H_CHARS/2 + 2, 37);
+	char *actor_cstr;
+	text_box(&actor_cstr, W_CHARS/2 - 17, H_CHARS/2 + 2, 37);
+	std::string actor(actor_cstr);
 	attr(BG(WHITE)); attr(BLACK);
-	
+
 	// exit command with hardcoded visual sequence
 	if(actor == "exit"){
 		drec();
 		center("Initializing shutdown sequence...");
+		progress(100);
 		progress(0), sleepms(200);
 		progress(10), sleepms(100);
 		progress(40), sleepms(300);
