@@ -147,8 +147,8 @@ void search(bool first) {
 	drec();
 	center("Enter the name of an actor:");
 	attr(NONE);
-	rect((W_CHARS/2-18)*W_CHAR-4, (1+H_CHARS/2)*H_CHAR-4, 37*W_CHAR+8, H_CHAR + 8,
-		0, 0, 0);
+	rect((W_CHARS/2-18)*W_CHAR-4, (1+H_CHARS/2)*H_CHAR-4,
+		37*W_CHAR+8, H_CHAR + 8, 0, 0, 0);
 	std::string actor = text_box(W_CHARS/2 - 17, H_CHARS/2 + 2, 37);
 	attr(BG(WHITE)); attr(BLACK);
 	
