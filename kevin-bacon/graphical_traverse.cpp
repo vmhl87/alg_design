@@ -146,6 +146,14 @@ void center(const char *s){
 	return center(s, W_CHARS/2, H_CHARS/2);
 }
 
+std::string text_box(int x, int y, int w){
+	char *str;
+	text_box(&str, x, y, w);
+	std::string ret;
+	ret.assign(str);
+	return ret;
+}
+
 // wrapper for entire search routine
 void search(bool first) {
 	// textbox input and UI to read in actor
@@ -154,9 +162,7 @@ void search(bool first) {
 	attr(NONE);
 	rect((W_CHARS/2-18)*W_CHAR-4, (1+H_CHARS/2)*H_CHAR-4,
 		37*W_CHAR+8, H_CHAR + 8, 0, 0, 0);
-	char *actor_cstr;
-	text_box(&actor_cstr, W_CHARS/2 - 17, H_CHARS/2 + 2, 37);
-	std::string actor(actor_cstr);
+	std::string actor = text_box(W_CHARS/2 - 17, H_CHARS/2 + 2, 37);
 	attr(BG(WHITE)); attr(BLACK);
 
 	// exit command with hardcoded visual sequence
