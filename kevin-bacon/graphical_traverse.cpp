@@ -421,15 +421,27 @@ void search(bool first) {
 	search(0);
 }
 
+int fromst(char *s){
+	int ret = 0;
+	for(int i=0; i<strlen(s); ++i){
+		ret = ret*10 + (s[i] - '0');
+	}
+	return ret;
+}
+
 // setup/cleanup global arrays & datasets
-int main() {
+int main(int argc, char *argv[]) {
 	// setup FBGUI
 	curs_set(0);
 	system("clear");
 	openfb();
 
-	width -= W_CHAR * 21 / 2, height -= H_CHAR * 7 / 2;
-	W_CHARS -= 10, H_CHARS -= 3;
+	if(argc>2){
+		int _LW = fromst(argv[1]),
+			_LH = fromst(argv[2]);
+		width -= W_CHAR * (_LW*2 + 1) / 2, height -= H_CHAR * (_LH*2 + 1) / 2;
+		W_CHARS -= _LW, H_CHARS -= _LH;
+	}
 
 	// initial background
 	rect(16, 16, width-32, height-32, 150, 150, 100);
