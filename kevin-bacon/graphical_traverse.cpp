@@ -61,26 +61,39 @@ int get_actor(std::string name){
 	return -1;
 }
 
+std::string ist(int i){
+	std::string ret;
+	while(i){
+		ret = (char)('0' + i%10) + ret;
+		i /= 10;
+	}
+	return ret;
+}
+
 // find actor name from integer ID
 std::string actor_name(int id, int r, int p){
-	std::ifstream act_name("actors_name.list");
-	for(int i=0; i<id; ++i){
-		std::string s; getline(act_name, s);
+	std::string fname = "actors_name.list";
+	std::ifstream act_name(fname);
+	std::string name;
+	for(int i=0; i<=id; ++i){
+		getline(act_name, name);
 		progress(r + i*p/id);
 	}
-	std::string name; getline(act_name, name);
 	act_name.close();
 	return name;
 }
 
-// same, but for movie
+// find movie name from ID: we splitbuffer this because some titles
+// seem to have UTF8 which drastically slows down the parse speed
 std::string movie_name(int id, int r, int p){
-	std::ifstream mov_name("movies_name.list");
-	for(int i=0; i<id; ++i){
-		std::string s; getline(mov_name, s);
+	std::string fname = "movie_names/" + ist(id/100000) + ".list";
+	std::ifstream mov_name(fname);
+	id %= 100000;
+	std::string name;
+	for(int i=0; i<=id; ++i){
+		getline(mov_name, name);
 		progress(r + i*p/id);
 	}
-	std::string name; getline(mov_name, name);
 	mov_name.close();
 	return name;
 }
@@ -161,8 +174,8 @@ void search(bool first) {
 	center("Enter the name of an actor:");
 	attr(NONE);
 	rect((W_CHARS/2-18)*W_CHAR-4, (1+H_CHARS/2)*H_CHAR-4,
-		37*W_CHAR+8, H_CHAR + 8, 0, 0, 0);
-	std::string actor = text_box(W_CHARS/2 - 17, H_CHARS/2 + 2, 37);
+		(width/2-(W_CHARS/2-18)*W_CHAR+4)*2, H_CHAR + 8, 0, 0, 0);
+	std::string actor = text_box(W_CHARS/2 - 17, H_CHARS/2 + 2, 36);
 	attr(BG(WHITE)); attr(BLACK);
 
 	// exit command with hardcoded visual sequence
@@ -195,7 +208,7 @@ void search(bool first) {
 
 	int actor_id = get_actor(actor);
 
-	sleepms(500);
+	sleepms(100);
 
 	// process if found
 	if(actor_id+1){
@@ -211,7 +224,7 @@ void search(bool first) {
 		attr(BLACK);
 		fflush(stdout);
 		
-		sleepms(2000);
+		sleepms(1000);
 		progress(100);
 	}else{
 		drec();
@@ -233,7 +246,6 @@ void search(bool first) {
 
 	// setup datastructures for traversal
 	drec();
-	center("Building search queue");
 
 	std::vector<traverse_node> search_queue;
 	int front_index = 0;
@@ -243,13 +255,6 @@ void search(bool first) {
 	
 	search_queue.push_back(actor_node_at(actor_id));
 	actors_visited.insert(actor_id);
-
-	for(int i=0; i<6; ++i){
-		progress(i*20);
-		sleepms(50);
-	}
-
-	sleepms(800);
 
 	// begin traversal
 	drec();
@@ -313,8 +318,6 @@ void search(bool first) {
 		++iter;
 	}
 	
-	sleepms(800);
-
 	// process no path found
 	if(!found_kevin_bacon){
 		drec();
@@ -332,7 +335,7 @@ void search(bool first) {
 	drech();
 	center("Found Kevin Bacon!");
 
-	sleepms(3000);
+	sleepms(800);
 
 	// backtrace to find exact actors/movies touched
 	progress(100);
@@ -374,7 +377,7 @@ void search(bool first) {
 
 	progress(100);
 	
-	sleepms(1000);
+	sleepms(800);
 	
 	rect(16, 16, width-32, height-32, 150, 150, 100);
 
@@ -424,6 +427,9 @@ int main() {
 	curs_set(0);
 	system("clear");
 	openfb();
+
+	width -= W_CHAR * 21 / 2, height -= H_CHAR * 7 / 2;
+	W_CHARS -= 10, H_CHARS -= 3;
 
 	// initial background
 	rect(16, 16, width-32, height-32, 150, 150, 100);
