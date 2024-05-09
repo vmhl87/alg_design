@@ -140,8 +140,34 @@ int notdre(int x, int y){
 	return to_color(150, 150, 100);
 }
 
+void schar(char c, int x, int y, int s, int r, int g, int b){
+	attr(NONE); attr(BOLD); attr(WHITE);
+	move(0, 0);
+	printf("%c", c);
+	fflush(stdout);
+	char *ptr = fbdata;
+	for(int i=0; i<H_CHAR; ++i){
+		for(int j=0; j<W_CHAR; ++j){
+			if(*ptr == -1) rect(x + j*s, y + i*s, s, s, r, g, b);
+			ptr += 4;
+		}
+		ptr += linel - W_CHAR*bytes;
+	}
+	rect(0, 0, W_CHAR, H_CHAR, 0, 0, 0);
+	attr(NONE);
+}
+
+void sstr(const char *str, int x, int y, int s, int r, int g, int b){
+	int p = -strlen(str);
+	do schar(*str, x+(p*s*W_CHAR)/2, y, s, r, g, b), p += 2;
+	while(*(++str) != 0);
+}
+
 void drect(){
 	shade(16, 16, width-32, height-32, notdre);
+	sstr("The Bacon Number", width/2+2, 52, 6, 0, 0, 0);
+	sstr("The Bacon Number", width/2, 50, 6, 78, 42, 132);
+	attr(BG(WHITE)); attr(BLACK);
 }
 
 // helper function for length of integer as a std::string literal
@@ -151,12 +177,13 @@ int lin(int i){
 	return x;
 }
 
-// ID of kevin bacon (hardcoded in this version)
-int kb_loc = 101;
-
 // overloads for input that can't be done in pure c
 void center(const char *s){
-	return center(s, W_CHARS/2, H_CHARS/2);
+	center(s, W_CHARS/2, H_CHARS/2);
+}
+
+void center(std::string s){
+	center(s.c_str());
 }
 
 std::string text_box(int x, int y, int w){
@@ -167,10 +194,13 @@ std::string text_box(int x, int y, int w){
 	return ret;
 }
 
+int target_id = 101;
+std::string target_name = "Kevin Bacon";
+
 // wrapper for entire search routine
-void search(bool first) {
+void search(){
 	// textbox input and UI to read in actor
-	drec();
+	drect();
 	center("Enter the name of an actor:");
 	attr(NONE);
 	rect((W_CHARS/2-18)*W_CHAR-4, (1+H_CHARS/2)*H_CHAR-4,
@@ -181,7 +211,7 @@ void search(bool first) {
 	// exit command with hardcoded visual sequence
 	if(actor == "exit"){
 		drec();
-		center("Initializing shutdown sequence...");
+		center("Synchronizing shutdown sequence...");
 		progress(100);
 		progress(0), sleepms(200);
 		progress(10), sleepms(100);
@@ -194,6 +224,45 @@ void search(bool first) {
 		return;
 	}
 	
+	// escape cmds
+	if(actor.size() && actor[0] == '%'){
+		if(actor.size() > 1){
+			if(actor[1] == 'r'){
+				drect();
+				search();
+				return;
+			}
+			if(actor[1] == 's' && actor.size() > 2 && actor[2] == ' '){
+				std::string nt = "";
+				for(int i=3; i<actor.size(); ++i){
+					nt += actor[i];
+				}
+				drec();
+				center("Updating target...");
+				progress(0);
+				int ntid = get_actor(nt);
+				if(ntid == -1){
+					drec();
+					center("Not found");
+					sleepms(1000);
+					search();
+					return;
+				}else{
+					target_id = ntid;
+					target_name = nt;
+					drech();
+					center("Target updated");
+					sleepms(1000);
+					progress(100);
+					search();
+					return;
+				}
+			}
+			search();
+			return;
+		}
+	}
+
 	// search for actor ID from actor name
 	drec();
 	move(W_CHARS/2 - (22 + actor.length())/2 + 1, H_CHARS/2);
@@ -240,7 +309,7 @@ void search(bool first) {
 
 		// rerun
 		progress(100);
-		search(0);
+		search();
 		return;
 	}
 
@@ -270,7 +339,7 @@ void search(bool first) {
 	traverse_node front = search_queue[0];
 	
 	bool found_kevin_bacon = 0;
-	if(actor == "Kevin Bacon") found_kevin_bacon = 1;
+	if(actor == target_name) found_kevin_bacon = 1;
 	
 	// DFS loop
 	while(!found_kevin_bacon && front_index < search_queue.size()){
@@ -300,7 +369,7 @@ void search(bool first) {
 						vl[front.id].adj[i], front.depth+1, iter
 					)
 				);
-				if(vl[front.id].adj[i] == kb_loc){
+				if(vl[front.id].adj[i] == target_id){
 					front = search_queue[search_queue.size()-1];
 					found_kevin_bacon = 1;
 					finished = 1;
@@ -328,12 +397,13 @@ void search(bool first) {
 
 		// rerun
 		progress(100);
-		search(0);
+		search();
 		return;
 	}
 	
 	drech();
-	center("Found Kevin Bacon!");
+	std::string re = "Found " + target_name;
+	center(re);
 
 	sleepms(800);
 
@@ -365,7 +435,7 @@ void search(bool first) {
 			std::string name = actor_name(node.id, x*100/ln, 100/ln);
 			sw = (name.length() > sw ? name.length() : sw);
 			vls.push(name);
-			if(node.id == kb_loc) break;
+			if(node.id == target_id) break;
 		}else{
 			std::string name = "(" + movie_name(node.id, x*100/ln, 100/ln) + ")";
 			sw = (name.length() > sw ? name.length() : sw);
@@ -404,7 +474,7 @@ void search(bool first) {
 		}else{
 			rectl((xv-1)*W_CHAR - 4, (yval-1)*H_CHAR - 4,
 				vls.front().size()*W_CHAR + 8, H_CHAR + 8, 50, 50, 50);
-			if(vls.front() == "Kevin Bacon") rectl((xv-1)*W_CHAR - 4,
+			if(vls.front() == target_name) rectl((xv-1)*W_CHAR - 4,
 				(yval-1)*H_CHAR - 4, vls.front().size()*W_CHAR + 8, H_CHAR + 8,
 				0, 0, 170);
 			printf("%s", vls.front().c_str());
@@ -417,8 +487,7 @@ void search(bool first) {
 	// rerun
 	move(0, 0);
 	std::string r; getline(std::cin, r);
-	drect();
-	search(0);
+	search();
 }
 
 int fromst(char *s){
@@ -444,8 +513,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	// initial background
-	rect(16, 16, width-32, height-32, 150, 150, 100);
-	drec();
+	drect();
 
 	// pretty-print startup sequence
 	attr(BG(WHITE)); attr(BLACK);
@@ -548,7 +616,7 @@ int main(int argc, char *argv[]) {
 	sleepms(1000);
 	
 	// start the search loop
-	search(1);
+	search();
 
 	// when done searching, start cleanup
 	drec();
