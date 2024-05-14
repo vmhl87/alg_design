@@ -1,5 +1,6 @@
 // libraries
 #include <unordered_set>
+#include <signal.h>
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -35,6 +36,11 @@ void progress(long long p) {
 	prc=p;
 }
 
+// kb interrupts
+volatile sig_atomic_t signal_status = 0;
+
+void sighandler(int s) {signal_status = s;}
+
 // actor, apn counts
 const long long name_len = 13205098,
 	            akas_len = 38592396;
@@ -49,6 +55,10 @@ node *al, *vl;
 int get_actor(std::string name){
 	std::ifstream act_name("actors_name.list");
 	for(int i=0; i<name_len; ++i){
+		if(signal_status == SIGINT){
+			act_name.close();
+			return -2;
+		}
 		std::string s; getline(act_name, s);
 		if(s == name){
 			act_name.close();
@@ -126,7 +136,7 @@ traverse_node movie_node_at(int id) {
 
 // drawing utilities - redraw various segments of the UI when updated
 void drec(){
-	rect(width/2 - 160, height/2 - 40, 320, 84, 170, 170, 170);
+	rect(width/2 - 160, height/2 - 40, 320, 80, 170, 170, 170);
 }
 
 void drech(){
@@ -137,6 +147,9 @@ int notdre(int x, int y){
 	if(x >= width/2 - 160 && y >= height/2 - 40 &&
 		x <= width/2 + 160 && y <= height/2 + 40)
 		return to_color(170, 170, 170);
+	if(x >= width/2 - 158 && y >= height/2 - 38 &&
+		x <= width/2 + 162 && y <= height/2 + 42)
+		return to_color(50, 50, 50);
 	return to_color(150, 150, 100);
 }
 
@@ -164,7 +177,7 @@ void sstr(const char *str, int x, int y, int s, int r, int g, int b){
 }
 
 void drect(){
-	shade(16, 16, width-32, height-32, notdre);
+	shade(8, 8, width-16, height-16, notdre);
 	sstr("The Bacon Number", width/2+2, 52, 6, 0, 0, 0);
 	sstr("The Bacon Number", width/2, 50, 6, 78, 42, 132);
 	attr(BG(WHITE)); attr(BLACK);
@@ -228,6 +241,9 @@ void search(){
 	if(actor.size() && actor[0] == '%'){
 		if(actor.size() > 1){
 			if(actor[1] == 'r'){
+				attr(NONE);
+				system("clear");
+				attr(BG(WHITE));
 				drect();
 				search();
 				return;
@@ -275,12 +291,14 @@ void search(){
 	
 	progress(0);
 
+	signal(SIGINT, sighandler); signal_status = 0;
 	int actor_id = get_actor(actor);
+	signal(SIGINT, SIG_DFL);
 
 	sleepms(100);
 
 	// process if found
-	if(actor_id+1){
+	if(actor_id >= 0){
 		drech();
 		move(W_CHARS/2 - (16 + actor.length() + lin(actor_id))/2 + 1, H_CHARS/2);
 		printf("Found ");
@@ -295,6 +313,16 @@ void search(){
 		
 		sleepms(1000);
 		progress(100);
+	}else if(actor_id == -2){
+		drec();
+		center("Aborted");
+		center("Press enter to run again", W_CHARS/2, H_CHARS/2 + 1);
+
+		std::string s; getline(std::cin, s);
+
+		progress(100);
+		search();
+		return;
 	}else{
 		drec();
 		move(W_CHARS/2 - (22 + actor.length())/2 + 1, H_CHARS/2);
@@ -338,59 +366,62 @@ void search(){
 	int iter = 0, depth = 0;
 	traverse_node front = search_queue[0];
 	
-	bool found_kevin_bacon = 0;
-	if(actor == target_name) found_kevin_bacon = 1;
+	int found_target = 0;
+	if(actor == target_name) found_target = 1;
 	
 	// DFS loop
-	while(!found_kevin_bacon && front_index < search_queue.size()){
+	signal(SIGINT, sighandler); signal_status = 0;
+	while(found_target == 0 && front_index < search_queue.size()){
+		if(signal_status == SIGINT){
+			found_target = 2;
+			break;
+		}
+
 		front = search_queue[front_index];
-		front_index++;
+		++front_index;
 			
 		bool finished = 0;
 		
 		if(front.is_act){
 			if(al[front.id].init) for(int i=0;i<al[front.id].n_adj;i++){
 				if(movies_visited.find(al[front.id].adj[i])
-				!=movies_visited.end()) continue;
+					!=movies_visited.end()) continue;
 				movies_visited.insert(al[front.id].adj[i]);
 				search_queue.push_back(
-					movie_node_at(
-						al[front.id].adj[i], front.depth+1, iter
-					)
+					movie_node_at(al[front.id].adj[i], front.depth+1, iter)
 				);
 			}
 		}else{
 			if(vl[front.id].init) for(int i=0;i<vl[front.id].n_adj;i++){
 				if(actors_visited.find(vl[front.id].adj[i])
-				!=actors_visited.end()) continue;
+					!=actors_visited.end()) continue;
 				actors_visited.insert(vl[front.id].adj[i]);
 				search_queue.push_back(
-					actor_node_at(
-						vl[front.id].adj[i], front.depth+1, iter
-					)
+					actor_node_at(vl[front.id].adj[i], front.depth+1, iter)
 				);
 				if(vl[front.id].adj[i] == target_id){
 					front = search_queue[search_queue.size()-1];
-					found_kevin_bacon = 1;
-					finished = 1;
+					found_target = 1;
 					break;
 				}
 			}
 		}
 
-		if(finished) break;
-		
+		if(found_target) break;
+
 		depth = front.depth;
 		
-		if(iter%576==0) progress(std::min(7 + iter/600, 100));
+		if(iter%576==0) progress(std::min(7 + (std::__lg(iter)-8) * 7, 100));
 		
 		++iter;
 	}
+	signal(SIGINT, SIG_DFL);
 	
 	// process no path found
-	if(!found_kevin_bacon){
+	if(found_target != 1){
 		drec();
-		center("Couldn't find a path!");
+		if(found_target == 0) center("Couldn't find a path!");
+		else center("Traversal aborted");
 		center("Press enter to run again", W_CHARS/2, H_CHARS/2 + 1);
 
 		std::string s; getline(std::cin, s);
@@ -449,10 +480,12 @@ void search(){
 	
 	sleepms(800);
 	
-	rect(16, 16, width-32, height-32, 150, 150, 100);
+	rect(8, 8, width-16, height-16, 150, 150, 100);
 
 	int lines = vls.size()*3 + 5;
 
+	rect(width/2 - sw*W_CHAR/2 - 21, height/2 - lines*H_CHAR/2 - 13,
+		sw*W_CHAR + 48, lines*H_CHAR + 32, 60, 60, 60);
 	rect(width/2 - sw*W_CHAR/2 - 24, height/2 - lines*H_CHAR/2 - 16,
 		sw*W_CHAR + 48, lines*H_CHAR + 32, 170, 170, 170);
 
