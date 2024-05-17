@@ -153,29 +153,6 @@ int notdre(int x, int y){
 	return to_color(150, 150, 100);
 }
 
-void schar(char c, int x, int y, int s, int r, int g, int b){
-	attr(NONE); attr(BOLD); attr(WHITE);
-	move(0, 0);
-	printf("%c", c);
-	fflush(stdout);
-	char *ptr = fbdata;
-	for(int i=0; i<H_CHAR; ++i){
-		for(int j=0; j<W_CHAR; ++j){
-			if(*ptr == -1) rect(x + j*s, y + i*s, s, s, r, g, b);
-			ptr += 4;
-		}
-		ptr += linel - W_CHAR*bytes;
-	}
-	rect(0, 0, W_CHAR, H_CHAR, 0, 0, 0);
-	attr(NONE);
-}
-
-void sstr(const char *str, int x, int y, int s, int r, int g, int b){
-	int p = -strlen(str);
-	do schar(*str, x+(p*s*W_CHAR)/2, y, s, r, g, b), p += 2;
-	while(*(++str) != 0);
-}
-
 void drect(){
 	shade(8, 8, width-16, height-16, notdre);
 	sstr("The Bacon Number", width/2+2, 52, 6, 0, 0, 0);
@@ -209,6 +186,8 @@ std::string text_box(int x, int y, int w){
 
 int target_id = 101;
 std::string target_name = "Kevin Bacon";
+
+std::pair<int, std::string> leaderboard[3];
 
 // wrapper for entire search routine
 void search(){
@@ -533,6 +512,13 @@ int fromst(char *s){
 
 // setup/cleanup global arrays & datasets
 int main(int argc, char *argv[]) {
+	// read leaderboard
+	std::ifstream lbstream("leaderboard.txt");
+	for(int i=0; i<3; ++i)
+		lbstream >> leaderboard[i].first,
+			getline(lbstream, leaderboard[i].second);
+	lbstream.close();
+	
 	// setup FBGUI
 	curs_set(0);
 	system("clear");
