@@ -1,6 +1,10 @@
 import math
 
 
+import time
+st = time.time()
+
+
 # could be subject to change
 import sys
 f = open(sys.argv[1])
@@ -10,6 +14,7 @@ f = open(sys.argv[1])
 points = []
 
 for line in f:
+    # we leave 2 empty spaces to store the two virtual stacks
     points.append([float(i) for i in line.split(',')] + [0, 0])
 
 f.close()
@@ -50,8 +55,8 @@ p1, p2, loc = 0, 0, us
 
 # compute up path by moving backwards through the virtual stack
 while loc > 0:
-    ol = loc
-    loc = points[loc][2]
+    ol, loc = loc, points[loc][2]
+
     p1 += math.sqrt(
         (points[ol][0] - points[loc][0])**2 +
         (points[ol][1] - points[loc][1])**2
@@ -62,17 +67,31 @@ while loc > 0:
 loc = ds
 
 while loc > 0:
-    ol = loc
-    loc = points[loc][3]
+    ol, loc = loc, points[loc][3]
+
     p2 += math.sqrt(
         (points[ol][0] - points[loc][0])**2 +
         (points[ol][1] - points[loc][1])**2
     )
 
 
+et = time.time()
+print("elapsed:", et - st)
+
+
 print("\033[1;30m--")
 print(p1, p2)
 print("--\033[0m")
+
+
+# I strongly think that the provided example outputs are
+# incorrect - they consistently show the wrong side of
+# convex hull, and my solution does find shorter paths -
+# when these lines are uncommented, the program outputs
+# the longer of the two paths and is consistent with the
+# provided outputs.
+#if p1 < p2: p1 = p2 + 1
+#else: p2 = p1 + 1
 
 
 ind = 2 if p1 < p2 else 3
