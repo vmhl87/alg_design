@@ -95,15 +95,13 @@ print("--\033[0m")
 #else: p2 = p1 + 1
 
 
-ind = 2 if p1 < p2 else 3
+[ind, ln] = [2, ul] if p1 < p2 else [3, dl]
 
 print("Shortest distance is:", min(p1, p2))
 
 loc = us
 
-while loc > 0:
+while ln > 0:
     print(str(points[loc][0]) + ',' + str(points[loc][1]))
     
-    loc = points[loc][ind]
-
-print(str(points[0][0]) + ',' + str(points[0][1]))
+    loc, ln = points[loc][ind], ln-1
