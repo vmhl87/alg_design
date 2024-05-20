@@ -17,9 +17,6 @@ f.close()
 points = sorted(points)
 
 
-# u, d = points[:1], points[:1]
-
-
 # create two virtual stacks, one for the up path and the other
 # for the down path - {u,d}s denotes top of stack and {u,d}l
 # denotes length of stack
@@ -34,37 +31,17 @@ def slope(a, b, c):
 
 # iterate over all points and update virtual stacks
 for i in range(1, len(points)):
-    p = points[i]
     while ul > 1 and slope(i, us, points[us][2]):
-        us = points[us][2]
-        ul -= 1
-        # u.pop()
-    # u.append(p)
-    p[2] = us
-    ul += 1
-    us = i
+        us, ul = points[us][2], ul-1
+
+    points[i][2] = us
+    us, ul = i, ul+1
+
     while dl > 1 and not slope(i, ds, points[ds][3]):
-        ds = points[ds][3]
-        dl -= 1
-        # d.pop()
-    # d.append(p)
-    p[3] = ds
-    ds = i
-    dl += 1
+        ds, dl = points[ds][3], dl-1
 
-
-# print("\033[1;30m")
-# c = 0
-# for p in points:
-#     p.append(c)
-#     print(p)
-#     c += 1
-# print("--")
-# for p in u: print(p)
-# print("--")
-# for p in d: print(p)
-# print("--")
-# print(ul, dl)
+    points[i][3] = ds
+    ds, dl = i, dl+1
 
 
 # compute lengths of up and down paths (p1, p2)
@@ -93,9 +70,9 @@ while loc > 0:
     )
 
 
-# print("--")
-# print(p1, p2)
-# print("--\033[0m")
+print("\033[1;30m--")
+print(p1, p2)
+print("--\033[0m")
 
 
 ind = 2 if p1 < p2 else 3
