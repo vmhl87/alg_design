@@ -84,12 +84,13 @@ print(p1, p2)
 print("--\033[0m")
 
 
-# I strongly think that the provided example outputs are
-# incorrect - they consistently show the wrong side of
+# I strongly believe that the provided example outputs are
+# incorrect - they consistently show the wrong side of the
 # convex hull, and my solution does find shorter paths -
 # when these lines are uncommented, the program outputs
 # the longer of the two paths and is consistent with the
 # provided outputs.
+
 #if p1 < p2: p1 = p2 + 1
 #else: p2 = p1 + 1
 
