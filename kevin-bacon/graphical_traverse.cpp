@@ -7,6 +7,7 @@
 #include <vector>
 #include <stack>
 #include <queue>
+#include <cmath>
 
 // framebuffer GUI libraries
 #include "tgui.h"
@@ -153,10 +154,47 @@ int notdre(int x, int y){
 	return to_color(150, 150, 100);
 }
 
+void sstrx(const char *s, int x, int y, int c, int r, int g, int b){
+	sstr(s, x+(strlen(s)<<2), y, c, r, g, b);
+}
+
+void sstr(std::string s, int x, int y, int c, int r, int g, int b){
+	sstr(s.c_str(), x, y, c, r, g, b);
+}
+
+void sstrx(std::string s, int x, int y, int c, int r, int g, int b){
+	sstrx(s.c_str(), x, y, c, r, g, b);
+}
+
+// leaderboard!
+std::pair<int, std::string> leaderboard[3];
+
 void drect(){
 	shade(8, 8, width-16, height-16, notdre);
 	sstr("The Bacon Number", width/2+2, 52, 6, 0, 0, 0);
 	sstr("The Bacon Number", width/2, 50, 6, 78, 42, 132);
+	int mwi = 20;
+	mwi = std::max(mwi, 3+(int)leaderboard[0].second.length()+12);
+	mwi = std::max(mwi, 3+(int)leaderboard[1].second.length()+12);
+	mwi = std::max(mwi, 3+(int)leaderboard[2].second.length()+12);
+	rect(width/2 - mwi*4-6, height-110, (mwi<<3)+16, 88, 50, 50, 50);
+	rect(width/2 - mwi*4-8, height-112, (mwi<<3)+16, 88, 170, 170, 170);
+	sstr("Longest paths found:", width/2, height-104, 1, 0, 0, 0);
+	sstrx("1.", width/2-4*mwi, height-80, 1, 0, 0, 0);
+	sstrx(leaderboard[0].second, width/2-4*mwi+24, height-80, 1, 0, 0, 0);
+	sstrx(", distance ", width/2-4*mwi+24+8*leaderboard[0].second.length(), height-80, 1, 0, 0, 0);
+	char v[4]; sprintf(v, "%d", leaderboard[0].first);
+	sstrx(v, width/2-4*mwi+24+8*leaderboard[0].second.length()+88, height-80, 1, 0, 0, 0);
+	sstrx("2.", width/2-4*mwi, height-64, 1, 0, 0, 0);
+	sstrx(leaderboard[1].second, width/2-4*mwi+24, height-64, 1, 0, 0, 0);
+	sstrx(", distance ", width/2-4*mwi+24+8*leaderboard[1].second.length(), height-64, 1, 0, 0, 0);
+	sprintf(v, "%d", leaderboard[1].first);
+	sstrx(v, width/2-4*mwi+24+8*leaderboard[1].second.length()+88, height-64, 1, 0, 0, 0);
+	sstrx("3.", width/2-4*mwi, height-48, 1, 0, 0, 0);
+	sstrx(leaderboard[2].second, width/2-4*mwi+24, height-48, 1, 0, 0, 0);
+	sstrx(", distance ", width/2-4*mwi+24+8*leaderboard[2].second.length(), height-48, 1, 0, 0, 0);
+	sprintf(v, "%d", leaderboard[2].first);
+	sstrx(v, width/2-4*mwi+24+8*leaderboard[2].second.length()+88, height-48, 1, 0, 0, 0);
 	attr(BG(WHITE)); attr(BLACK);
 }
 
@@ -186,8 +224,6 @@ std::string text_box(int x, int y, int w){
 
 int target_id = 101;
 std::string target_name = "Kevin Bacon";
-
-std::pair<int, std::string> leaderboard[3];
 
 // wrapper for entire search routine
 void search(){
@@ -223,6 +259,17 @@ void search(){
 				attr(NONE);
 				system("clear");
 				attr(BG(WHITE));
+				drect();
+				search();
+				return;
+			}
+			if(actor[1] == 'w'){
+				std::ofstream lbstream("leaderboard.txt");
+				for(int i=0; i<3; ++i){
+					lbstream << leaderboard[i].first << ' ' <<
+						leaderboard[i].second << '\n';
+				}
+				lbstream.close();
 				drect();
 				search();
 				return;
@@ -475,25 +522,57 @@ void search(){
 	int yval = (height/2 - 16)/H_CHAR - lines/2 + 2,
 		par = 0;
 
+	bool record = 0;
+	if(target_id == 101){
+		int len = vls.size()>>1, slen = len;
+
+		for(int i=0; i<3; ++i){
+			if(leaderboard[i].second == actor) break;
+			if(leaderboard[i].first < slen){
+				std::string tmp = leaderboard[i].second + "";
+				leaderboard[i].second =  actor + "";
+				actor = tmp + "";
+				slen = leaderboard[i].first + 1;
+				leaderboard[i].first = len;
+				len = slen - 1;
+				record = 1;
+			}
+		}
+	}
+
 	while(!vls.empty()){
-		int xv = W_CHARS/2 - vls.front().size()/2 + 1;
-		move(xv, yval);
+		int xv = width/2 - vls.front().size()*4 + 8;
 		if(par){
 			_vline(width/2, (yval-3)*H_CHAR + 12, (yval+1)*H_CHAR + 4,
 				100, 100, 100);
 			_hline(width/2-2, width/2+2, (yval+1)*H_CHAR + 2, 100, 100, 100);
-			printf("\033[1m%s\033[0;30;47m", vls.front().c_str());
+			_vline(width/2, yval*H_CHAR-20, yval*H_CHAR+4, 150, 150, 150);
+			sstr(vls.front(), width/2, yval*H_CHAR-16, 1, 50, 50, 50);
 		}else{
-			rectl((xv-1)*W_CHAR - 4, (yval-1)*H_CHAR - 4,
+			rectl(xv-8 - 4, (yval-1)*H_CHAR - 4,
 				vls.front().size()*W_CHAR + 8, H_CHAR + 8, 50, 50, 50);
-			if(vls.front() == target_name) rectl((xv-1)*W_CHAR - 4,
+			if(vls.front() == target_name) rectl(xv-8 - 4,
 				(yval-1)*H_CHAR - 4, vls.front().size()*W_CHAR + 8, H_CHAR + 8,
 				0, 0, 170);
-			printf("%s", vls.front().c_str());
+			sstr(vls.front(), width/2, yval*H_CHAR-16, 1, 0, 0, 0);
 		}
 		par ^= 1;
 		yval += 3;
 		vls.pop();
+	}
+
+	if(record){
+		if(0){
+			std::ofstream lbstream("leaderboard.txt");
+			for(int i=0; i<3; ++i){
+				lbstream << leaderboard[i].first << ' ' <<
+					leaderboard[i].second << '\n';
+			}
+			lbstream.close();
+		}
+		rectl(16, height-46+28-6, 16*9-3, 6, 0, 100, 0);
+		_hline(19, 154, height-46+28-6, 150, 150, 100);
+		sstrx("Wow, new record!", 24, height-38, 1, 0, 0, 0);
 	}
 
 	// rerun
@@ -515,7 +594,7 @@ int main(int argc, char *argv[]) {
 	// read leaderboard
 	std::ifstream lbstream("leaderboard.txt");
 	for(int i=0; i<3; ++i)
-		lbstream >> leaderboard[i].first,
+		lbstream >> leaderboard[i].first, lbstream.ignore(1),
 			getline(lbstream, leaderboard[i].second);
 	lbstream.close();
 	
