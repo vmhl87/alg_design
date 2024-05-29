@@ -9,9 +9,9 @@
 #include <queue>
 #include <cmath>
 
-// framebuffer GUI libraries
-#include "tgui.h"
-#include "tgin.h"
+// framebuffer GUI libraries  -  https://github.com/vmhl87/fbgui
+#include "tgui.c"
+#include "tgin.c"
 
 // transitional datastructures - static node & traverse node
 typedef struct{
