@@ -1,6 +1,6 @@
 #include <stdlib.h>
-#include "tgui.h"
-#include "tgin.h"
+#include "tgui.c"
+#include "tgin.c"
 
 int main(){
 	FILE *data = fopen(".out.txt", "r");

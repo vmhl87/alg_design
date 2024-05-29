@@ -1,1 +1,0 @@
-/home/vincent/misc/fbgui/tgin.h
